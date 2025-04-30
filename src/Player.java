@@ -1,6 +1,5 @@
 public class Player {
 
-
     // fields
     private String name;
     private int score = 0;
