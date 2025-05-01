@@ -3,6 +3,35 @@ import java.util.List;
 public class Autocomplete {
     private TrieNode root;
 
+    // 1. We have made a TrieNode class that contains the TrieNode
+    // structure, to help you
+
+    // 2. PLEASE SEE THE EMAIL FROM the TAs -- it has information on Lanterna
+    // which will be used WITH the Autocomplete class. It's basically a plugin
+    // with its own methods that will help us format the UI of the game
+
+    /* 3. Notes:
+    Hi! This is the class for Autocomplete, it's basically the same
+    logic as the previous autocomplete assignment, except instead of
+    a dictionary, we use the Movie titles that our database gives us
+
+    The goal is for the player to be able to see autocompleted words
+    that give them relevant suggestions in ALPHABETICAL ORDER
+
+    Example 1: if the player types "Harry" or "Har" or "Ha"
+
+    then the autocomplete suggestions should give "Harry Potter and the
+    Chamber of Secrets" (Or just all of the harry potter films)
+    in alphabetical order
+
+    Example 2: if the player types "a"
+
+    then the autocomplete suggestions should give "abstinence", then "accolades"
+    , then "atonement", etc.... depending on how many suggestions we want
+
+    (pretend these are all actual movie names)
+
+     */
 
     // constructor for an autocomplete object
     // root node is a TrieNode
@@ -43,7 +72,14 @@ public class Autocomplete {
     }
 
 
-    public List<String> getSuggestions(String prefix, int max)
+    public List<String> getSuggestions(String prefix, int maxSuggestions){
+        return null;
+    }
+
+
+    public void dfs (TrieNode node, List<String> results, int max){
+
+    }
 
 
 
