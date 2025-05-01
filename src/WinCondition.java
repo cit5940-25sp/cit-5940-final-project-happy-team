@@ -29,4 +29,10 @@ public class WinCondition {
         return "Reach " + target + " movies of " + type
                 + ": " + value;
     }
+
+    //random generate the win condition
+    public static WinCondition random(MovieDatabase database, int targetCount) {
+
+        return null;
+    }
 }

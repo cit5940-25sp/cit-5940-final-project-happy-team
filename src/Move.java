@@ -17,7 +17,7 @@ public class Move {
 
     // constructor for a Move object
     // represents a Player's Move
-    public Move(Player player, Movie moviePlayed, ConnectionType connectionType, String connectionValue, ConnectionType connectionType1){
+    public Move(Player player, Movie moviePlayed, ConnectionType connectionType, String connectionValue){
         // we dont fill in the timestamp when we create the obj, because the timestamp is set to whatever
         // time is current time and in GameContoller and gamestate when we determine
         // if a move has passed time limit, we use this

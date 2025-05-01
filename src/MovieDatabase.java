@@ -36,6 +36,13 @@ public class MovieDatabase {
         return moviesById.get(id);
     }
 
+    //get movie randomly
+    public Movie getRandomMovie() {
+        List<Integer> ids = new ArrayList<>(moviesById.keySet());
+        int idx = new Random().nextInt(ids.size());
+        return moviesById.get(ids.get(idx));
+    }
+
 
     public Set<Movie> getMovieByGenre(String genre){
         return genreIndex.get(genre);
