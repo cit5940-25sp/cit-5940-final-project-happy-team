@@ -34,26 +34,39 @@ public class GameState {
         this.database = database;
         this.players = players;
 
-        BlockCommand powerupBlock = new BlockCommand();
-        SkipCommand powerupSkip = new SkipCommand();
-        EscapeCommand powerupEscape = new EscapeCommand();
-
-        // both player 1 and 2 have the same initial list of powerups
-        // with block, skip, escape. one each
-        List<Command> listOfPowerUps = new ArrayList<>();
-        listOfPowerUps.add(powerupBlock);
-        listOfPowerUps.add(powerupSkip);
-        listOfPowerUps.add(powerupEscape);
-
-        for (Player player: players){
-            // since the constructor initializes a GameState obj (only happens once)
-            // we can fill out the initial state of the array
-            availablePowerUps.put(player, listOfPowerUps);
+        for (Player player : players) {
+            // both player 1 and 2 have the same initial list of powerups
+//        // with block, skip, escape. one each
+            List<Command> listOfPowerUps = new ArrayList<>();
+            listOfPowerUps.add(new BlockCommand(player));
+            listOfPowerUps.add(new SkipCommand());
+            listOfPowerUps.add(new EscapeCommand(database));
+            availablePowerUps.put(player,listOfPowerUps);
         }
-
-        for (Move.ConnectionType ct : Move.ConnectionType.values()){
+        for (Move.ConnectionType ct : Move.ConnectionType.values()) {
             connectionUsage.put(ct, new HashMap<>());
         }
+
+//        BlockCommand powerupBlock = new BlockCommand();
+//        SkipCommand powerupSkip = new SkipCommand();
+//        EscapeCommand powerupEscape = new EscapeCommand();
+//
+//        // both player 1 and 2 have the same initial list of powerups
+//        // with block, skip, escape. one each
+//        List<Command> listOfPowerUps = new ArrayList<>();
+//        listOfPowerUps.add(powerupBlock);
+//        listOfPowerUps.add(powerupSkip);
+//        listOfPowerUps.add(powerupEscape);
+//
+//        for (Player player: players){
+//            // since the constructor initializes a GameState obj (only happens once)
+//            // we can fill out the initial state of the array
+//            availablePowerUps.put(player, listOfPowerUps);
+//        }
+//
+//        for (Move.ConnectionType ct : Move.ConnectionType.values()){
+//            connectionUsage.put(ct, new HashMap<>());
+//        }
 
     }
 
