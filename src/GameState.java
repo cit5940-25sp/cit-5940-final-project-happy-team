@@ -58,7 +58,7 @@ public class GameState {
     }
 
     // starts the game by selecting an initial movie (randomly select from database)
-    public void startGame(){
+    public void initialGameState(){
         // 1. Create "starting move"
         // select movie from database
         // create Movie object
