@@ -5,6 +5,7 @@ public class GameState {
     // tracks currently played (top of pile) movie
     private Movie currentMovie;
     private List<Player> players;
+    private Set<Player> blockedPlayers = new HashSet<>();
 
     // it's either the player or the computer
     private int currentPlayerIndex = 0;
@@ -171,6 +172,22 @@ public class GameState {
     public List<Command> getPowerUpsFor (Player player){
         return Collections.unmodifiableList(availablePowerUps.getOrDefault(player, Collections.emptyList())
         );
+    }
+
+    public void skipPlayer() {
+        nextTurn(); //go to next player
+    }
+
+    public void blockPlayer(Player player) {
+        //mark the player as blocked
+        blockedPlayers.add(player);
+
+        //if the blocked player is about to play, skip them immd
+        Player curr = players.get(currentPlayerIndex);
+        if (curr.equals(player)) {
+            blockedPlayers.remove(player); //clear block immd
+            nextTurn(); //skip to other player
+        }
     }
 
 
