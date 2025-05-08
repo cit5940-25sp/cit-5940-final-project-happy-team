@@ -72,15 +72,42 @@ public class Autocomplete {
     }
 
 
-    public List<String> getSuggestions(String prefix, int maxSuggestions){
-        return null;
+    public List<String> getSuggestions(String prefix, int maxSuggestions) {
+        List<String> results = new ArrayList<>();
+        TrieNode prefixNode = getNode(prefix.toLowerCase());
+        if (prefixNode == null) {
+            return results;
+        }
+
+        dfs(prefixNode, results, maxSuggestions);
+        return results;
     }
 
 
     public void dfs (TrieNode node, List<String> results, int max){
+        if (results.size() == max) {
+            return;
+        }
+        if (node.isEndOfWord) {
+            results.add(node.fullWord);
+        }
 
+        for (TrieNode child : node.children.values()) {
+            dfs(child, results, max);
+        }
     }
 
+    // get node representing end of prefix
+    private TrieNode getNode(String prefix) {
+        TrieNode node = root;
+        for (char c : prefix.toCharArray()) {
+            if (!node.children.containsKey(c)) {
+                return null;
+            }
+            node = node.children.get(c);
+        }
+        return node;
+    }
 
 
 

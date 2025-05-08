@@ -113,6 +113,7 @@ public class GameUI {
                         timerLabel.setText("Time remaining: " + secondsRemaining.get());
                         if (secondsRemaining.get() <= 0) {
                             timerRunning = false;
+                            handleTimeUp();
                         }
                     });
                 } catch (IOException e) {
@@ -122,15 +123,34 @@ public class GameUI {
         }, 0, 1000); // update every second
     }
 
+    private void handleTimeUp() {
+        try {
+            gui.getGUIThread().invokelater(() -> {
+                // Display time's up
+                timerLabel.setText("Time's up!");
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stopTimer() {
+        timerRunning = false;
+    }
+
     // display autocomplete suggestions
     public void displayAutocompleteSuggestions(final List<String> allSuggestions) {
-        gui.getGUIThread().invokeLater(() -> {
-            suggestions.clearItems();
-            allSuggestions.forEach(suggestionsList::addItem);
-            if(!allSuggestions.isEmpty()) {
-                allSuggestions.setSelectedIndex(0);
-            }
-        });
+        try {
+            gui.getGUIThread().invokeLater(() -> {
+                suggestions.clearItems();
+                allSuggestions.forEach(suggestionsList::addItem);
+                if(!allSuggestions.isEmpty()) {
+                    allSuggestions.setSelectedIndex(0);
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 //    // print a certain string of text with the set columns and rows
@@ -152,36 +172,57 @@ public class GameUI {
     // show current GameState on our screen
     public void showGameState(GameState state) {
         Player current = state.getCurrentPlayer();
-        gui.getGUIThread().invokeLater(() -> {
-            playerInfoLabel.setText(current.getName() + "'s turn - " + current.getWinCondition().getDescription());
+        try {
+            gui.getGUIThread().invokeLater(() -> {
+                playerInfoLabel.setText(current.getName() + "'s turn - " + current.getWinCondition().getDescription());
 
-            // update game history
-            StringBuilder history = new StringBuilder("Recent movies: \n");
-            List<Movie> recentMovies = state.getPlayedMoviesHistory();
-            // display last 5 movies
-            int start = Math.max(0, historyMovies.size() - 5);
-            for (int i = start, i < recentMovies.size(); i++) {
-                Movie movie = historyMovies.get(i);
-                history.append(movie.getTitle()).appeand(" (").append(movie.getReleaseYear()).append(")\n");
-            }
-            historyLabel.setText(history.toString());
+                // update game history
+                StringBuilder history = new StringBuilder("Recent movies: \n");
+                List<Movie> recentMovies = state.getPlayedMoviesHistory();
+                // display last 5 movies
+                int start = Math.max(0, historyMovies.size() - 5);
+                for (int i = start, i <recentMovies.size();
+                i++){
+                    Movie movie = historyMovies.get(i);
+                    history.append(movie.getTitle()).appeand(" (").append(movie.getReleaseYear()).append(")\n");
+                }
+                historyLabel.setText(history.toString());
 
-            // start timer
-            startTurnTimer();
-        });
+                // start timer
+                startTurnTimer();
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // prompt the player for an action
     public String promptPlayer(Player currentPlayer) {
         // clear input box
-        inputBox.setText("");
-        inputBox.takeFocus();
-        screen.refresh();
+        try {
+            gui.getGUIThread().invokeLater(() -> {
+                inputBox.setText("");
+                inputBox.takeFocus();
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        // wait for player to enter
+        try {
+            screen.refresh();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // wait for player
         while (true) {
-            // non-blocking check
-            KeyStroke keyStroke = screen.pollInput();
+            // check for non-blocking
+            KeyStroke keystroke = null;
+            try {
+                keyStroke = screen.pollInput();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             if (keyStroke != null) {
                 if (keyStroke.getKeyType() == KeyType.Enter) {
@@ -202,49 +243,73 @@ public class GameUI {
     public void showGameEnd(Player winner) {
         stopTimer();
 
-        gui.getGUIThread().invokeLater(() -> {
-            // create modal dialog
-            Panel panel = new Panel();
-            panel.setLayoutManager(new GridLayout(1));
+        try {
+            gui.getGUIThread().invokeLater(() -> {
+                // create modal dialog
+                Panel panel = new Panel();
+                panel.setLayoutManager(new GridLayout(1));
 
-            // announce winner
-            panel.addComponent(new Label(winner.getName() + " wins the game!")
-                    .setLayoutData(GridLayout.createLayoutData(
-                    GridLayout.Alignment.CENTER,
-                    GridLayout.Alignment.CENTER,
-                    true, true)));
+                // announce winner
+                panel.addComponent(new Label(winner.getName() + " wins the game!")
+                        .setLayoutData(GridLayout.createLayoutData(
+                                GridLayout.Alignment.CENTER,
+                                GridLayout.Alignment.CENTER,
+                                true, true)));
 
-            // game summary
-            panel.addComponent(new Label("Final Score: " + winner.getScore())
-                    .setLayoutData(GridLayout.createLayoutData(
-                    GridLayout.Alignment.CENTER,
-                    GridLayout.Alignment.CENTER,
-                    true, true)));
+                // game summary
+                panel.addComponent(new Label("Final Score: " + winner.getScore())
+                        .setLayoutData(GridLayout.createLayoutData(
+                                GridLayout.Alignment.CENTER,
+                                GridLayout.Alignment.CENTER,
+                                true, true)));
 
-            // play again button
-            Button quitButton = new Button("Quit", () -> {
-                try {
-                    closeUI();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                // play again button
+                Button quitButton = new Button("Quit", () -> {
+                    try {
+                        closeUI();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+                panel.addComponent(quitButton);
+
+                // display the dialog
+                BasicWindow endWindow = new BasicWindow("Game Over");
+                endWindow.setComponent(panel);
+                endWindow.setHints(List.of(Window.Hint.CENTERED));
+                gui.addWindow(endWindow);
             });
-            panel.addComponent(quitButton);
-
-            // display the dialog
-            BasicWindow endWindow = new BasicWindow("Game Over");
-            endWindow.setComponent(panel);
-            endWindow.setHints(List.of(Window.Hint.CENTERED));
-            gui.addWindow(endWindow);
-        });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    // this is so if the user types in something that doesn't connect
-    // they get an error prompt
-//    public void showError(String message) throws IOException{
-//        // we were inspired from online forms where there would be
-//        // "please try again" in red letters when we have a typo or invalid input
-//    }
+//     this is so if the user types in something that doesn't connect
+//     they get an error prompt
+    public void showError(String message) throws IOException{
+        // we were inspired from online forms where there would be
+        // "please try again" in red letters when we have a typo or invalid input
+        try {
+            gui.getGUIThread().invokeLater(() -> {
+                // show error
+                Label error = new Label(message).setForegroundColor(TextColor.ANSI.RED);
+
+                // create popup
+                Panel errorPanel = new Panel();
+                errorPanel.setLayoutManager(new GridLayout(1));
+                errorPanel.addComponent(error);
+                errorPanel.addComponent(new Button("OK", () -> {
+                }));
+
+                BasicWindow errorWindow = new BasicWindow("Error");
+                errorWindow.setComponent(errorPanel);
+                errorWindow.setHints(List.of(Window.Hint.CENTERED));
+                gui.addWindow(errorWindow);
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     // VERY IMPORTANT:
