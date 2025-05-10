@@ -74,8 +74,13 @@ public class Movie {
         return writers;
     }
 
-    // no setters needed -- the fields are filled out during Movie object creation
-    // and we dont need to ever change the information inside, so setters are not needed
+    public void setDirector(String director) {
+        this.director = director;
+    }
+    public void setComposer (String composer) {
+        this.composer = composer;
+    }
+
 
 
 }
