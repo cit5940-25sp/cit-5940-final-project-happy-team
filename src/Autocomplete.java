@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class Autocomplete {
@@ -92,9 +93,8 @@ public class Autocomplete {
             results.add(node.fullWord);
         }
 
-        for (TrieNode child : node.children.values()) {
-            dfs(child, results, max);
-        }
+        // Sort
+        node.children.keySet().stream().sorted().forEach(c -> dfs(node.children.get(c), results, max));
     }
 
     // get node representing end of prefix
@@ -108,8 +108,4 @@ public class Autocomplete {
         }
         return node;
     }
-
-
-
-
 }

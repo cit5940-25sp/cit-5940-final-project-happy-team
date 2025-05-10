@@ -80,6 +80,10 @@ public class GameState {
         // mark this movie as used (put that movie into usedMovieIds and playedMoviesHistory)
     }
 
+    public List<Movie> getPlayedMoviesHistory() {
+        return new ArrayList<>();
+    }
+
 
     // determines if this current Move is valid, based on gamestate.
     // if used, or if surpasses connection usage limit, or the connection has no match
