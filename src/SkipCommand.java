@@ -10,7 +10,7 @@ public class SkipCommand implements Command{
         //state.skipPlayer(next); //need to implement this in gameState
 
 
-    }
+    } // im gonna do this today
 
     @Override
     public String getName() {
