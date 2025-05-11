@@ -1,4 +1,6 @@
+import java.util.Arrays;
 import java.util.List;
+
 
 public class Movie {
 
@@ -34,6 +36,53 @@ public class Movie {
         this.cines = cines;
         this.genres = genres;
     }
+
+
+    // check if this movie has a specific connection value of the given type
+    //used in gameState to determine if a move is valid
+    public boolean hasConnection(Move.ConnectionType type, String value) {
+        if (value == null) {
+            return false; //return false if no connection
+        }
+        switch (type) {
+            case ACTOR:
+                return actors != null && actors.contains(value);
+            case DIRECTOR:
+                return director != null && !director.isEmpty() && director.equals(value);
+            case WRITER:
+                return writers !=null && writers.contains(value);
+            case COMPOSER:
+                return composer != null &&  !composer.isEmpty() && composer.equals(value);
+            case CINES:
+                return cines != null && cines.contains(value);
+            case GENRE:
+                return genres != null && genres.contains(value);
+            default:
+                return false;
+        }
+    }
+
+    //return a list of all values for a specific connection type
+    public List<String> getConnections(Move.ConnectionType type) {
+        switch (type) {
+            case ACTOR:
+                return actors;
+            case DIRECTOR:
+                return Arrays.asList(director);
+            case WRITER:
+                return writers;
+            case COMPOSER:
+                return Arrays.asList(composer);
+            case CINES:
+                return cines;
+            case GENRE:
+                return genres;
+            default:
+                return Arrays.asList(); // empty list
+        }
+    }
+
+
 
 
 
