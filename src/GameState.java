@@ -261,6 +261,7 @@ public class GameState {
     // used when setting current movie (like in escapeCommand)
     public void setCurrentMovie(Movie currentMovie) {
         this.currentMovie = currentMovie;
+        playedMoviesHistory.add(currentMovie);
     }
 
     // used when i need to quickly get the opponent player to the current player

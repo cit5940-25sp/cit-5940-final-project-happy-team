@@ -1,76 +1,100 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CommandTest {
+
     private GameState state;
     private Player player1;
     private Player player2;
     private MovieDatabase db;
 
+    private Movie movie1;
+    private Movie movie2;
+    private int movieCallCount;
+
     @BeforeEach
     public void setup() {
-        // Manually create fake movie database with two movies that share the same actor
-        ArrayList<String> sharedActors = new ArrayList<>(Arrays.asList("Shared Actor"));
-        ArrayList<String> writers1 = new ArrayList<>(Arrays.asList("Writer A"));
-        ArrayList<String> writers2 = new ArrayList<>(Arrays.asList("Writer B"));
-        ArrayList<String> cines = new ArrayList<>(Arrays.asList("Cine A"));
-        ArrayList<String> genres = new ArrayList<>(Arrays.asList("Genre A"));
+        // test data for us to test on
+        ArrayList<String> sharedActors = new ArrayList<>(Collections.singletonList("Shared Actor"));
+        ArrayList<String> writers1 = new ArrayList<>(Collections.singletonList("Writer A"));
+        ArrayList<String> writers2 = new ArrayList<>(Collections.singletonList("Writer B"));
+        ArrayList<String> cines = new ArrayList<>(Collections.singletonList("Cine A"));
+        ArrayList<String> genres = new ArrayList<>(Collections.singletonList("Genre A"));
 
-        Movie movie1 = new Movie(1, "Movie One", 2000, "Dir A", "Comp A", sharedActors, writers1, cines, genres);
-        Movie movie2 = new Movie(2, "Movie Two", 2001, "Dir B", "Comp B", sharedActors, writers2, cines, genres);
+        movie1 = new Movie(1, "Movie One", 2000, "Dir A", "Comp A", sharedActors, writers1, cines, genres);
+        movie2 = new Movie(2, "Movie Two", 2001, "Dir B", "Comp B", sharedActors, writers2, cines, genres);
 
+        // fake temp MovieDatabase that returns movie1 on first call and movie2 on second
+        movieCallCount = 0;
         db = new MovieDatabase() {
-            private List<Movie> fakeMovies = Arrays.asList(movie1, movie2);
-
             @Override
             public Movie getRandomMovie() {
-                return movie2;
+                movieCallCount++;
+                if (movieCallCount == 1) {
+                    return movie1;
+                } else {
+                    return movie2;
+                }
             }
         };
 
+        // create win conditions for players
         WinCondition wc1 = new WinCondition(Move.ConnectionType.ACTOR, "Shared Actor", 1);
         WinCondition wc2 = new WinCondition(Move.ConnectionType.DIRECTOR, "Dir B", 1);
 
-        player1 = new Player("Alice", wc1);
-        player2 = new Player("Bob", wc2);
+        player1 = new Player("Player 0", wc1);
+        player2 = new Player("Player 1", wc2);
 
-        state = new GameState(db, Arrays.asList(player1, player2));
-        state.setCurrentMovie(movie1); // simulate game start
+        // create GameState
+        List<Player> players = new ArrayList<Player>();
+        players.add(player1);
+        players.add(player2);
+
+        state = new GameState(db, players);
+        state.initialGameState();  // sets movie1 as the first current movie
     }
 
+
+    //////////////////////// TEST CODE BLOCKS BELOW /////////////////////////
+
+
+    // test skip command and see if it skips the player's turn
     @Test
-    public void testSkipCommandSkipsTurn() {
+    public void testingSkipCommandSkipsTurn() {
         Player before = state.getCurrentPlayer();
         new SkipCommand().execute(state);
         Player after = state.getCurrentPlayer();
         assertNotEquals(before, after, "SkipCommand should skip to next player");
     }
 
+
+    // test escape command and see if it gives a new Movie as the current Movie
     @Test
-    public void testEscapeCommandChangesMovie() {
+    public void testingEscapeCommandChangesMovie() {
         Movie before = state.getPlayedMoviesHistory().get(state.getPlayedMoviesHistory().size() - 1);
 
         EscapeCommand escape = new EscapeCommand(db);
         escape.execute(state);
+
         Movie after = state.getPlayedMoviesHistory().get(state.getPlayedMoviesHistory().size() - 1);
 
         assertNotEquals(before.getId(), after.getId(), "EscapeCommand should change the current movie");
     }
 
+
+
+    // test block command and see if the player can repeat a turn (because they've blocked the opponent's
+    // next turn
     @Test
-    public void testBlockCommandSkipsBlockedPlayer() {
-        // Make player2 the current player
-        state.skipPlayer(); // Alice → Bob
+    public void testingBlockCommandSkipsBlockedPlayer() {
+        state.skipPlayer();
 
-        // Block Alice (Bob's opponent)
-        new BlockCommand().execute(state); // Alice should be blocked and skipped
+        new BlockCommand().execute(state);
 
-        // Now the current player should loop back to Bob
         assertEquals(player2, state.getCurrentPlayer(), "BlockCommand should skip opponent's turn");
     }
-
-
 }
