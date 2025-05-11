@@ -5,37 +5,48 @@ import java.util.List;
 public class MovieNameGame {
     public static void main(String[] args) throws IOException {
         //intialize the database
-        MovieDatabase database = new MovieDatabase();
-        database.loadMovies("");//path
-        database.buildIndexes();
-        GameState gameState = null; // we initialize the initial gamestate using the initializeGameState method
+        //use loadAll to loadMovies and build index
+        //quit the program if cannot load data
 
-        //create UI
-        GameUI ui = new GameUI(gameState);
+        try {
 
-        //show palyer name : computer: palyer 1; human: player 2
-        String name1 = "player 1";
-        String name2 = "player 2";
+            MovieDatabase database = new MovieDatabase();
+            String moviesPath = "tmdb_5000_movies.csv";
+            String creditsPath = "tmdb_5000_credits.csv";
+            database.loadAll(moviesPath, creditsPath);
 
+            //show player name: computer: player 1; human: player 2
+            String name1 = "Player 1";
+            String name2 = "Player 2";
 
-        // generate the winCondition randomly
-        WinCondition wc1 = WinCondition.random(database,3);
-        WinCondition wc2 = WinCondition.random(database,3);
+            // generate the winCondition randomly
+            WinCondition wc1 = WinCondition.random(database,5);
+            WinCondition wc2 = WinCondition.random(database,5);
 
-        //build player list - based on player 1 and 2
-        //list of players
-        Player p1 = new Player(name1,wc1);
-        Player p2 = new Player(name2, wc2);
-        List<Player> players = new ArrayList<Player>();
-        players.add(p1);
-        players.add(p2);
+            //build player list - based on player 1 and 2
+            //list of players
+            Player p1 = new Player(name1,wc1);
+            Player p2 = new Player(name2, wc2);
+            List<Player> players = new ArrayList<>();
+            players.add(p1);
+            players.add(p2);
 
-        //call controller
-        GameController controller = new GameController(database,ui,players);
-        controller.start();
+            //first create gameState
+            GameState gameState = new GameState(database, players);
+            gameState.initialGameState();
 
-        //exit and clean
-        ui.closeUI();
+            //create UI
+            GameUI ui = new GameUI(gameState);
 
+            //create controller and start the game
+            GameController controller = new GameController(database, ui, players);
+            controller.start();
+
+            //exit and clean
+            ui.closeUI();
+        } catch (Exception e) {
+            System.err.println("Error loading database files: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

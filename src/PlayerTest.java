@@ -1,6 +1,6 @@
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 
 public class PlayerTest {
@@ -46,5 +46,38 @@ public class PlayerTest {
         p.incrementScore();
         assertEquals("Score should be 3 after three increments",
                 3,p.getScore());
+    }
+    @Test
+    public void testPlayerWithSameWinCOndition() {
+        //test two players wiht the same win condition type but different values
+        WinCondition horr = new WinCondition(Move.ConnectionType.GENRE, "Horror", 3);
+        WinCondition actionCondition = new WinCondition(Move.ConnectionType.GENRE, "Action",3);
+
+        Player p1 = new Player("Player1", horr);
+        Player p2 = new Player("Player2", actionCondition);
+        //both should have the same type of win condition
+        assertEquals("Both palyers should hvae smae win condition type",
+                p1.getWinCondition().getType(), p2.getWinCondition().getType());
+
+        //But different values
+        assertNotEquals("Players should have different win condition values",
+                p1.getWinCondition().getValue(), p2.getWinCondition().getValue());
+        //but different values
+        assertNotEquals("Players should have different win condition values",
+                p1.getWinCondition().getValue(), p2.getWinCondition().getValue());
+        //scores should be tracked separately
+        p1.incrementScore();
+        p1.incrementScore();
+        p1.incrementScore(); //player 1 has reached their win condition
+
+        p2.incrementScore(); //player 2 has not
+        assertEquals("Player 1 should have score 3", 3, p1.getScore());
+        assertEquals("Player 2 should have score 1", 1, p2.getScore());
+
+        assertTrue("Player 1's win condition should be met",
+                p1.getWinCondition().isMet());
+        assertFalse("Player 2's win condition should be met",
+                p2.getWinCondition().isMet());
+
     }
 }

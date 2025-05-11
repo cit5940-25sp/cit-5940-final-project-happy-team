@@ -78,7 +78,7 @@ public class Move
     @Override
     public String toString(){
         // will look kinda like this "Player 1 plays Titanic via ACTOR (Leonardo DiCaprio)"
-        return player.getName() + "plays " + moviePlayed.getTitle() + " via " + connectionType + " (" + connectionValue + ")";
+        return player.getName() + " plays " + moviePlayed.getTitle() + " via " + connectionType + " (" + connectionValue + ")";
     }
 
 

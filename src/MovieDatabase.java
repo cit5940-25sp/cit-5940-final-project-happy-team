@@ -286,6 +286,11 @@ public class MovieDatabase {
         return writerIndex.get(writer);
     }
 
+    public Set<Integer> getAllMovieIds () {
+        return new HashSet<>(moviesById.keySet());
+
+    }
+
 
 
 
