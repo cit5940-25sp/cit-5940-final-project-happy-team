@@ -49,7 +49,15 @@ public class GameUI {
         this.gameState = gameState;
 
         // initialize the terminal and screen
-        terminal = new DefaultTerminalFactory().createTerminal();
+        //terminal = new DefaultTerminalFactory().createTerminal();
+
+
+        terminal = new DefaultTerminalFactory()
+                .setTerminalEmulatorTitle("Movie Name Game")
+                .setForceTextTerminal(false)
+                .setPreferTerminalEmulator(true)
+                .createTerminal();
+
         screen = new TerminalScreen(terminal);
         screen.startScreen();
 
