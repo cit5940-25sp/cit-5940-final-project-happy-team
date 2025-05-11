@@ -35,4 +35,10 @@ public class WinCondition {
 
         return null;
     }
+    public Move.ConnectionType getType() {
+        return type;
+    }
+    public String getValue() {
+        return value;
+    }
 }
