@@ -1,7 +1,5 @@
-import java.time.LocalDate;
 import java.util.*;
 import com.google.gson.*;
-import java.io.BufferedReader;
 import java.io.*;
 import java.nio.file.*;
 import java.time.format.DateTimeFormatter;
@@ -9,7 +7,9 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-
+//we use JSON parsing (GSon) because some fields in the CSV are stored as JSON arrays inside
+//a single CSV cell,  we use csv file paths so that loading from both IDE
+// and simple String.split() would make a mess
 
 public class MovieDatabase {
 
@@ -23,10 +23,16 @@ public class MovieDatabase {
     private Map<String, Set<Movie>> cinesIndex = new HashMap<>();
     private Map<String, Set<Movie>> composerIndex = new HashMap<>();
     private Map<String, Set<Movie>> genreIndex = new HashMap<>();
+    //a sorted set of all movie titles for prefix search
     private  TreeSet<String> titleSet = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+
+    //GSOn instance for parsing JSON- csv fields
     private  Gson gson = new Gson();
+    //Formatter for release date strings
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("M/dd/yyyy");
+    //keep track of which movies we've returned randomly
     private Set<Integer> usedMovieIds = new HashSet<>();
+    private Map<String, Movie> moviesByTitle = new HashMap<>();
 
     //load movie, credit csv and then build indexes
     public void loadAll(String moviesCsvFile, String creditsCsvFile) throws IOException {
@@ -38,6 +44,7 @@ public class MovieDatabase {
 
     // load data from a file to be indexed
     //load basic movie data: id, title, year, genres
+    //genres come in as a JSON string, so we parse them with Gson
     public void loadMovies (String path) throws IOException {
         Path csv = Paths.get(path);
         if (!Files.exists(csv)) {
@@ -50,6 +57,7 @@ public class MovieDatabase {
             for (CSVRecord rec : parser) {
                 int id = Integer.parseInt(rec.get("id").trim());
                 String title = rec.get("title").trim();
+                //parse release year from either M/D/YYYY or YYYY-MM-DD
                 int year = 0;
                 String rd = rec.get("release_date").trim();
                 if (!rd.isEmpty()) {
@@ -81,6 +89,7 @@ public class MovieDatabase {
 
                     }
                 }
+                //create a movie with empty crew/actors for now
                 Movie m = new Movie(id, title, year,"",""
                         ,new ArrayList<>(),
                         new ArrayList<>(),
@@ -88,12 +97,15 @@ public class MovieDatabase {
                         genres);
                 titleSet.add(title);
                 moviesById.put(id,m);
+                moviesByTitle.put(title.toLowerCase(),m);
             }
 
 
         }
     }
 
+    //read the credits CSV< parse cast (actors) and crew roles:
+    //Director, Original Music Composer, Writer, Director of Photography
     public void loadCredits(String path) throws IOException {
         Path csv = Paths.get(path);
         if (!Files.exists(csv)) {
@@ -102,8 +114,7 @@ public class MovieDatabase {
         try (
                 Reader in = Files.newBufferedReader(csv);
                 CSVParser parser = new CSVParser(in, CSVFormat.DEFAULT.withFirstRecordAsHeader());
-
-                ) {
+        ) {
             for (CSVRecord rec : parser) {
                 int id = Integer.parseInt(rec.get(0).trim());
                 Movie m = moviesById.get(id);
@@ -111,7 +122,8 @@ public class MovieDatabase {
                     continue;
                 }
                 String castJson = rec.get("cast");
-                //String crewJson = rec.get(3);
+
+                //Parse cast JSON array for actor names
                 try {
                     JsonArray arr = JsonParser.parseString(castJson).getAsJsonArray();
                     for (JsonElement el : arr) {
@@ -121,6 +133,7 @@ public class MovieDatabase {
                 } catch (Exception ignore) {
 
                 }
+                //parse crew JSON array for specific jobs
                 String crewJson = rec.get("crew");
                 try {
                     JsonArray arr = JsonParser.parseString(crewJson).getAsJsonArray();
@@ -154,6 +167,7 @@ public class MovieDatabase {
     // build index maps (lookup index) for actor, dir, writer, etc
     public void buildIndexes(){
         for (Movie m : moviesById.values()) {
+            //index actors
             for (String a : m.getActors()) {
                 Set<Movie> s = actorIndex.get(a);
                 if ( s == null) {
@@ -162,6 +176,7 @@ public class MovieDatabase {
                 }
                 s.add(m);
             }
+            //index director
             String d = m.getDirector();
             if (!d.isEmpty()) {
                 Set<Movie> s = directorIndex.get(d);
@@ -171,6 +186,7 @@ public class MovieDatabase {
                 }
                 s.add(m);
             }
+            //index writers
             for (String w : m.getWriters()) {
                 Set<Movie> s = writerIndex.get(w);
                 if (s == null) {
@@ -179,6 +195,7 @@ public class MovieDatabase {
                 }
                 s.add(m);
             }
+            //index cinematographers
             for (String c : m.getCines()) {
                 Set<Movie> s = cinesIndex.get(c);
                 if (s == null) {
@@ -187,6 +204,7 @@ public class MovieDatabase {
                 }
                 s.add(m);
             }
+            //index composer
             String comp = m.getComposer();
             if (!comp.isEmpty()) {
                 Set<Movie> s = composerIndex.get(comp);
@@ -196,6 +214,7 @@ public class MovieDatabase {
                 }
                 s.add(m);
             }
+            //index genres
             for (String g : m.getGenres()) {
                 Set<Movie> s = genreIndex.get(g);
                 if (s == null) {
@@ -208,11 +227,12 @@ public class MovieDatabase {
     }
 
 
-
+    //return up to 5 movie titles that start with the given prefix (case-insensitive)
     public List<String> searchByTitlePrefix(String prefix){
         if (prefix == null || prefix.isEmpty()) {
             return Collections.emptyList();
         }
+        //define an exclusive upper bound by appending '{'
         String from = prefix;
         String to = prefix + "{";
 
@@ -221,7 +241,7 @@ public class MovieDatabase {
         int count = 0;
         for (String t : range) {
             suggestions.add(t);
-            if (count++ >= 5) {
+            if (count++ >= 4) { //show up to 5 results
                 break;
             }
         }
@@ -232,13 +252,12 @@ public class MovieDatabase {
 
     // getters (accessing set of Movies that have this element)
 
-
     // retrieves Movie by its ID (it returns whatever Movie has that id)
     public Movie getMovieById(int id){
         return moviesById.get(id);
     }
 
-    //get movie randomly
+    //get movie randomly, once movie is used, return null
     public Movie getRandomMovie() {
         List<Integer> unused = new ArrayList<>();
         for (int id : moviesById.keySet()) {
@@ -261,7 +280,7 @@ public class MovieDatabase {
 
     }
 
-
+    //getters for each index
     public Set<Movie> getMovieByGenre(String genre){
         return genreIndex.get(genre);
     }
@@ -289,6 +308,12 @@ public class MovieDatabase {
     public Set<Integer> getAllMovieIds () {
         return new HashSet<>(moviesById.keySet());
 
+    }
+    public Movie getMovieByTitle(String title) {
+        if (title == null || title.isEmpty()) {
+            return null;
+        }
+        return moviesByTitle.get(title.toLowerCase());
     }
 
 
