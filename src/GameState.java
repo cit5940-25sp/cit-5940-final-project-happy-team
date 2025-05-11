@@ -77,6 +77,36 @@ public class GameState {
     }
 
 
+    // returns a Move (or empty) of a move that is valid for this movie and previous one
+    // this validated Move will contain all the things we need to fill in the missing connection related values
+    public Optional<Move> tryBuildMove(Player player, Movie nextMovie){
+        // PRIORITIZES / checks for win condition first
+        WinCondition wc = player.getWinCondition();
+        if (currentMovie.hasConnection(wc.getType(), wc.getValue())
+                && nextMovie.hasConnection(wc.getType(), wc.getValue())){
+
+            Move candidate = new Move(player, nextMovie, wc.getType(), wc.getValue());
+            if (isValidMove(candidate)) {
+                return Optional.of(candidate);
+            }
+        }
+
+        // otherwise search for any connection that works
+        for(Move.ConnectionType eachType: Move.ConnectionType.values()){
+            List<String> nextMovieConnections = nextMovie.getConnections(eachType);
+            for (String value: nextMovieConnections){
+                if (currentMovie.hasConnection(eachType, value)){
+                    Move candidate = new Move (player, nextMovie, eachType, value);
+                    if (isValidMove(candidate)){
+                        return Optional.of(candidate);
+                    }
+                }
+            }
+        }
+
+        // no valid move found
+        return Optional.empty();
+    }
 
 
     // determines if this current Move is valid, based on gamestate.
@@ -270,8 +300,7 @@ public class GameState {
     }
 
 
-
-
-
-
+    public int getRoundsPlayed() {
+        return roundsPlayed;
+    }
 }
