@@ -76,7 +76,7 @@ public class GameState {
         return new ArrayList<>(playedMoviesHistory);
     }
 
-    ap
+
 
 
     // determines if this current Move is valid, based on gamestate.
