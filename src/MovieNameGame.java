@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieNameGame {
@@ -25,7 +26,9 @@ public class MovieNameGame {
         //list of players
         Player p1 = new Player(name1,wc1);
         Player p2 = new Player(name2, wc2);
-        List<Player> players = List.of(p1,p2);
+        List<Player> players = new ArrayList<Player>();
+        players.add(p1);
+        players.add(p2);
 
         //call controller
         GameController controller = new GameController(database,ui,players);
