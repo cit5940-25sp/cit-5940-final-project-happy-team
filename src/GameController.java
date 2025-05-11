@@ -1,4 +1,6 @@
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 public class GameController {
 
@@ -18,29 +20,102 @@ public class GameController {
 
 
     // game loop start (this is the method that starts the game loop)
-    public void start(){
+    // initializes the game state
+    public void start() throws IOException {
         // call the initial game state (random first movie)
         state.initialGameState();
+
+        // while it's not isGameOver yet, keep looping this
         while(!state.isGameOver()){
+            // UI -- show the game state + prompt the current player for input
             ui.showGameState(state);
             String input = ui.promptPlayer(state.getCurrentPlayer());
+            Player currentPlayer = state.getCurrentPlayer();
+
+            // parse input to determine if its a powerUP (skip, block, escape) or a Movie
+            // convert the input string into a corresponding Command object
+            // --- Parse logic
+            if (input == null || input.trim().isEmpty()){
+                // if the input is null or without spaces its empty (nothing but spaces)
+                ui.showError("Invalid input. Please try again!");
+                // keep looping until it no longer comes into this loop
+                continue;
+            }
+            // if code gets here, we know that the input is valid
+            // convert input to lowercase
+            input = input.trim().toLowerCase();
 
 
+            // if its a command, call state.appluCommand(player, command)
+            Optional<Command> commandMaybe = getCommandFromInput(input);
 
-            // TODOOOOOOO: parse input into Move or Command, validate, and apply
-            // input is the player string input, parse it into a Move (movie)
-            // split it into movie name, actor, etc....
-            // then use that to create a Move
-            // if player wants to use a PowerUp, do that here
+            // SUPER IMPORTANT -- some powerups consume a "next turn" within themselves. We make sure we don't
+            // call double next turn
+            boolean mustCallNextTurn = false;
 
-            // its either going to be a Move or a Command(powerup)
+            // if there is something in commandMaybe, then its a command
+            if (commandMaybe.isPresent()) {
+                Command command = commandMaybe.get();
+
+                if (state.applyCommand(currentPlayer, command)) {
+                    if (!(command instanceof SkipCommand || command instanceof BlockCommand)) {
+                        // if it was a escape command, set mustCallNextTurn to true so we nextTurn()
+                        mustCallNextTurn = true;
+                    }
+                }
+            // if there is nothing in commandMaybe, then it's a MOVIE
+            } else {
+                Movie guessedMovie = database.getMovieByTitle(input);
+
+                // if the guessedMovie is null, the movie doesn't exist in the database
+                if (guessedMovie == null) {
+                    ui.showError("That movie doesn't exist. Please try again!");
+                    continue;
+                }
+
+                // try building a Move with this Movie
+                Optional<Move> move = state.tryBuildMove(currentPlayer, guessedMovie);
+                Move newMove;
+                // If it returns Optional.empty(), show error via ui.showError("Invalid move. Try again.")
+                if (!move.isPresent()){
+                    ui.showError("Invalid move. Please try again!");
+                    continue;
+                } else {
+                    // if it IS present, then we can make newMove with this move
+                    newMove = move.get();
+                }
+                // If present, continue, it means its a valid move and the game should continue like usual
+                // call this state.applyMove(move);
+                state.applyMove(newMove);
+                mustCallNextTurn = true;
+            }
 
 
+            // advance to next turn using state.nextTurn(), IF the flag is true
+            if (mustCallNextTurn) {
+                state.nextTurn();
+            }
 
-
-            state.nextTurn();
         }
+
+        // if loop ends it means the game ended, and you do ui.showGameEnd(state.getWinner());
         ui.showGameEnd(state.getWinner());
     }
+
+
+    // helper function too parse a string input for a command
+    private Optional<Command> getCommandFromInput(String input) {
+        switch (input.toLowerCase()) {
+            case "skip":
+                return Optional.of(new SkipCommand());
+            case "block":
+                return Optional.of(new BlockCommand());
+            case "escape":
+                return Optional.of(new EscapeCommand(database));
+            default:
+                return Optional.empty();
+        }
+    }
+
 
 }
