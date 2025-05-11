@@ -38,6 +38,7 @@ public class Movie {
     }
 
 
+
     // check if this movie has a specific connection value of the given type
     //used in gameState to determine if a move is valid
     public boolean hasConnection(Move.ConnectionType type, String value) {

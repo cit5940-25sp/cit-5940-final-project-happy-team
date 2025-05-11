@@ -36,6 +36,7 @@ public class Move
         return timestamp;
     }
 
+
     public ConnectionType getConnectionType() {
         return connectionType;
     }

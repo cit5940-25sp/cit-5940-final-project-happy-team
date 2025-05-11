@@ -49,5 +49,24 @@ public class MovieTest {
 
     }
 
+    @Test
+    public void testFindCommonCOnnections() {
+    //test finding common connection between 2 movies
+    List<String> avatarActors = avatar.getConnections(Move.ConnectionType.ACTOR);
+    List<String> piratesActors = pirates.getConnections(Move.ConnectionType.ACTOR);
+
+    //find common actors if exist
+    Set<String> commonActors = new HashSet<>(avatarActors);
+    commonActors.retainAll(piratesActors);
+    //find common genres
+    List<String> avatarGenres = avatar.getConnections(Move.ConnectionType.GENRE);
+    List<String> piratesGenres = pirates.getConnections(Move.ConnectionType.GENRE);
+    Set<String> com = new HashSet<>(avatarActors);
+    commonActors.retainAll(piratesGenres);
+    assertTrue("Avatar and Pirates should share at least one genre",
+            !com.isEmpty());
+
+
+    }
 
 }

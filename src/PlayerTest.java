@@ -40,7 +40,7 @@ public class PlayerTest {
                 p.getScore()
 
         );
-        p.incrementScore();;
+        p.incrementScore();
         assertEquals("Score should be 2 after two increments",
                 2,p.getScore());
         p.incrementScore();
