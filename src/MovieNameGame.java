@@ -8,6 +8,11 @@ public class MovieNameGame {
         //use loadAll to loadMovies and build index
         //quit the program if cannot load data
 
+
+        // Set Lanterna to use Swing terminal
+        System.setProperty("com.googlecode.lanterna.terminal.DefaultTerminalFactory.DefaultTerminalType", "swing");
+        System.setProperty("java.awt.headless", "false");
+
         try {
 
             MovieDatabase database = new MovieDatabase();
@@ -37,6 +42,21 @@ public class MovieNameGame {
 
             //create UI
             GameUI ui = new GameUI(gameState);
+
+            // Get all movie titles for autocomplete
+            List<String> allMovieTitles = new ArrayList<>();
+            for (int id : database.getAllMovieIds()) {
+                Movie movie = database.getMovieById(id);
+                if (movie != null) {
+                    allMovieTitles.add(movie.getTitle());
+                }
+            }
+            // Create and set autocomplete
+            Autocomplete autocomplete = new Autocomplete(allMovieTitles);
+            ui.setAutocomplete(autocomplete);
+
+
+
 
             //create controller and start the game
             GameController controller = new GameController(database, ui, players);

@@ -63,6 +63,12 @@ public class GameUI {
         startTurnTimer();
     }
 
+
+    public void setAutocomplete(Autocomplete ac) {
+        this.ac = ac;
+    }
+
+
     private void buildUI() {
         // create main window
         mainWindow = new BasicWindow("Movie Name Game");
@@ -245,6 +251,8 @@ public class GameUI {
 
             // start timer
             startTurnTimer();
+
+            inputBox.takeFocus();
         });
     }
 
