@@ -36,6 +36,8 @@ public class GameUI {
     private Instant turnStartTime;
 
     private Autocomplete ac;
+    private GameState gameState;
+
 
 //    private ScheduledExecutorService scheduler;
 //    // we give them 30 seconds before time is up
@@ -43,7 +45,9 @@ public class GameUI {
 //    private boolean timerRunning = true;
 
     // constructor
-    public GameUI() throws IOException {
+    public GameUI(GameState gameState) throws IOException {
+        this.gameState = gameState;
+
         // initialize the terminal and screen
         terminal = new DefaultTerminalFactory().createTerminal();
         screen = new TerminalScreen(terminal);
@@ -144,6 +148,11 @@ public class GameUI {
         gui.getGUIThread().invokeLater(() -> {
             // Display time's up
             timerLabel.setText("Time's up!");
+            gameState.setTimeExpired(true);
+
+            // immediately show winner (the opponent)
+            Player winner = gameState.getOpponentPlayer();
+            showGameEnd(winner);
         });
     }
 
@@ -367,7 +376,7 @@ public class GameUI {
         terminal.close();
     }
 
-    public static void main(String[] args) {
+   /* public static void main(String[] args) {
         try {
             List<String> movies = Arrays.asList("Avengers", "Divergent", "Avatar", "Lion King");
             Autocomplete ac = new Autocomplete(movies);
@@ -376,6 +385,6 @@ public class GameUI {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 }

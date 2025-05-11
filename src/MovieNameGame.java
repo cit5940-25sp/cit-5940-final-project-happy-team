@@ -7,9 +7,10 @@ public class MovieNameGame {
         MovieDatabase database = new MovieDatabase();
         database.loadMovies("");//path
         database.buildIndexes();
+        GameState gameState = null; // we initialize the initial gamestate using the initializeGameState method
 
         //create UI
-        GameUI ui = new GameUI();
+        GameUI ui = new GameUI(gameState);
 
         //show palyer name : computer: palyer 1; human: player 2
         String name1 = "player 1";

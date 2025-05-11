@@ -1,6 +1,8 @@
 import java.util.*;
 
 public class GameState {
+
+    // fields
     private MovieDatabase database;
     // tracks currently played (top of pile) movie
     private Movie currentMovie;
@@ -20,6 +22,8 @@ public class GameState {
     private Map<Move.ConnectionType, Map<String,Integer>> connectionUsage = new HashMap<>();
 
     private List<Movie> playedMoviesHistory = new ArrayList<>();
+    private List<Move> moveHistory = new ArrayList<>();
+
 
     // tracks the available power Ups
     // Player = player 1 or 2
@@ -28,6 +32,7 @@ public class GameState {
 
     private int roundsPlayed = 0;
 
+    private boolean timeExpired = false;
 
 
     // constructor
@@ -37,9 +42,9 @@ public class GameState {
 
         for (Player player : players) {
             // both player 1 and 2 have the same initial list of powerups
-//        // with block, skip, escape. one each
+            // with block, skip, escape. one each
             List<Command> listOfPowerUps = new ArrayList<>();
-            listOfPowerUps.add(new BlockCommand(player));
+            listOfPowerUps.add(new BlockCommand());
             listOfPowerUps.add(new SkipCommand());
             listOfPowerUps.add(new EscapeCommand(database));
             availablePowerUps.put(player,listOfPowerUps);
@@ -47,78 +52,101 @@ public class GameState {
         for (Move.ConnectionType ct : Move.ConnectionType.values()) {
             connectionUsage.put(ct, new HashMap<>());
         }
-
-//        BlockCommand powerupBlock = new BlockCommand();
-//        SkipCommand powerupSkip = new SkipCommand();
-//        EscapeCommand powerupEscape = new EscapeCommand();
-//
-//        // both player 1 and 2 have the same initial list of powerups
-//        // with block, skip, escape. one each
-//        List<Command> listOfPowerUps = new ArrayList<>();
-//        listOfPowerUps.add(powerupBlock);
-//        listOfPowerUps.add(powerupSkip);
-//        listOfPowerUps.add(powerupEscape);
-//
-//        for (Player player: players){
-//            // since the constructor initializes a GameState obj (only happens once)
-//            // we can fill out the initial state of the array
-//            availablePowerUps.put(player, listOfPowerUps);
-//        }
-//
-//        for (Move.ConnectionType ct : Move.ConnectionType.values()){
-//            connectionUsage.put(ct, new HashMap<>());
-//        }
-
     }
 
     // starts the game by selecting an initial movie (randomly select from database)
     public void initialGameState(){
         // 1. Create "starting move"
-        // select movie from database
-        // create Movie object
-        // make a Move object from the Movie information. Not yet assigned connection info
-        // mark this movie as used (put that movie into usedMovieIds and playedMoviesHistory)
+
+        // select random movie from database
+        Movie initialMovie = database.getRandomMovie();
+
+        // set this initialMovie to be the current movie of this gamestate
+        this.currentMovie = initialMovie;
+
+        // add this movie to "used" lists
+        usedMovieIds.add(initialMovie.getId());
+        playedMoviesHistory.add(initialMovie);
+
+        // I'm NOT going to create a Move for this initial movie, because it's technically not a Move (its not
+        // player-made)
     }
 
     public List<Movie> getPlayedMoviesHistory() {
-        return new ArrayList<>();
+        return new ArrayList<>(playedMoviesHistory);
     }
+
+    ap
 
 
     // determines if this current Move is valid, based on gamestate.
-    // if used, or if surpasses connection usage limit, or the connection has no match
-    // then false
+    // if already used, or if surpasses connection usage limit, or the connection has no match, then  = false
     public boolean isValidMove(Move move){
-        // Check usedMovieIds, connectionUsage limits, and actual connection validity
-        // for connectionUsage -- if the Integer
+        // check if this move is a valid connection by comparing the current movie (prev) and the one from the move
+        // that the player wants to play (getMoviePlayed from the Move)
+        Movie prev = currentMovie;
+        Movie next = move.getMoviePlayed();
 
-        Map<String, Integer> type = connectionUsage.get(move.getConnectionType());
-        int alreadyUsed = type.getOrDefault(move.getConnectionValue(),0);
-        if (alreadyUsed >= 3){
-            // if this EXACT CONNECTION has been used 3 times prior, this move is not valid
+
+        // Check usedMovieIds, connectionUsage limits, and actual connection validity
+
+        // check if usedMovieIds already has this movie in it, then it's false, not valid Move
+        if (usedMovieIds.contains(move.getMoviePlayed().getId())) {
             return false;
         }
 
+        // if this EXACT CONNECTION has been used 3 times prior, this move is not valid
+        Map<String, Integer> usageMap = connectionUsage.get(move.getConnectionType());
+        int alreadyUsed = usageMap.getOrDefault(move.getConnectionValue(),0);
+        if (alreadyUsed >= 3){
+            return false;
+        }
+
+
+        // check if both THIS move and the previous move actually has this connection
+        Move.ConnectionType cType = move.getConnectionType();
+        String value = move.getConnectionValue();
+
+        if (!prev.hasConnection(cType, value) || !next.hasConnection(cType, value)) {
+            return false;
+        }
+
+        // NOTE: if isValidMove returns true, it means this Move will be used to make our next Move :)
         return true;
     }
 
-    // if isValidMove, then this Move is "applied"
+
+
+    // if tryBuildMove was able to make a new valid Move, then this Move is "applied" to gameState
+    // pass in the newly made Move that was output from tryBuildMove
+    // also, if this Move counts for a player's winCondition, add progress to it
     public void applyMove(Move move){
         // update currentMovie
         // enter this movie into usedMovieIds
         // enter this movie into playedMoviesHistory
+        // enter this Move into moveHistory
         // update the connectionUsage map to include/increment usage
 
-        Map<String, Integer> type = connectionUsage.get((move.getConnectionType()));
+        Map<String, Integer> usageType = connectionUsage.get((move.getConnectionType()));
         String value = move.getConnectionValue();
-        int alreadyUsed = type.getOrDefault(value, 0);
-        type.put(value, alreadyUsed + 1);
+        int alreadyUsed = usageType.getOrDefault(value, 0);
+        usageType.put(value, alreadyUsed + 1);
 
-
+        // the currentMovie is updated to this new valid Move's
         this.currentMovie = move.getMoviePlayed();
+
         usedMovieIds.add(currentMovie.getId());
         playedMoviesHistory.add(currentMovie);
+        moveHistory.add(move);
 
+
+        // if this Move matches the player's win condition, add to this player's win condition progress
+        Player currentPlayer = getCurrentPlayer();
+        WinCondition wc = currentPlayer.getWinCondition();
+
+        if (move.getConnectionType() == wc.getType() && move.getConnectionValue().equals(wc.getValue())) {
+            wc.recordProgress();
+        }
     }
 
 
@@ -135,19 +163,54 @@ public class GameState {
    }
 
 
-   // check if Game has reached Over conditions
+
+
+
+    public void setTimeExpired(boolean expired) {
+        this.timeExpired = expired;
+    }
+
+
+    // check if Game has reached Over conditions
+    // true if game is now over
+    // false if game is not over and we should continue
     public boolean isGameOver(){
         // check if:
         // player winCondition is met
         // time has run out
+
+        // if timer is out
+        if (timeExpired){
+            return true;    // game is over if time is expired
+        }
+
+        for (Player bothPlayers: players){
+            if (bothPlayers.getWinCondition().isMet()){
+                return true;
+            }
+        }
+
         return false;
     }
 
+
+    // return the Player that is the winner
     public Player getWinner(){
         // return Player who's winCondition was met
         // or
         // return the Player who's timer has not run out
         // (aka the opponent of the "out" player)
+
+        if (timeExpired){
+            return getOpponentPlayer();
+        }
+
+        for (Player player : players){
+            if (player.getWinCondition().isMet()){
+                return player;
+            }
+        }
+
         return null;
     }
 
@@ -182,32 +245,28 @@ public class GameState {
         nextTurn(); //go to next player
     }
 
+    // block player is used in Command (block) to block opposite player
     public void blockPlayer(Player player) {
         //mark the player as blocked
         blockedPlayers.add(player);
 
-        //if the blocked player is about to play, skip them immd
+        //if the blocked player is about to play, skip them
         Player curr = players.get(currentPlayerIndex);
         if (curr.equals(player)) {
-            blockedPlayers.remove(player); //clear block immd
+            blockedPlayers.remove(player); //clear block
             nextTurn(); //skip to other player
         }
     }
 
+    // used when setting current movie (like in escapeCommand)
+    public void setCurrentMovie(Movie currentMovie) {
+        this.currentMovie = currentMovie;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-    // method that fills out and then keeps track of connectionUsage
-
+    // used when i need to quickly get the opponent player to the current player
+    public Player getOpponentPlayer() {
+        return players.get((currentPlayerIndex + 1) % players.size());
+    }
 
 
 

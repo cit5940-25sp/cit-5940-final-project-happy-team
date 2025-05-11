@@ -8,7 +8,13 @@ public class EscapeCommand implements Command{
 
     @Override
     public void execute(GameState state) {
-        //TODO:escape logic (pick random movie, update state)
+        Movie newRandomMovie = database.getRandomMovie();
+
+        state.setCurrentMovie(newRandomMovie);
+
+        // add this here if it doesn't clash with GameUI
+        System.out.println("Escape power-up used! The new movie is " + newRandomMovie.getTitle() + "!");
+
     }
     @Override
     public String getName() {

@@ -1,16 +1,20 @@
 public class SkipCommand implements Command{
-    private Player target;
+   // private Player target;
     public SkipCommand() {
 
     }
+
+    // this executes specific gamestate based on skip command (player gets skipped)
+    // gamestate is now different, and everything should reflect that
     @Override
     public void execute(GameState state) {
         Player next = state.getCurrentPlayer();
-        //TODO: implement skip logic in gamestate
-        //state.skipPlayer(next); //need to implement this in gameState
 
+        // this is implemented in gameState
+        // skips current player's turn
+        state.skipPlayer();
 
-    } // im gonna do this today
+    }
 
     @Override
     public String getName() {

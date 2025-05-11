@@ -1,4 +1,5 @@
-public class Move {
+public class Move
+{
 
    // fields
     private Player player;
