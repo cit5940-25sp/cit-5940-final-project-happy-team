@@ -11,6 +11,9 @@ public class BlockCommand implements Command{
     public void execute(GameState state) {
         Player opposingPlayer = state.getOpponentPlayer();
         state.blockPlayer(opposingPlayer);
+        System.out.println("Block power-up used! " + state.getOpponentPlayer().getName() +
+                "'s next turn is blocked/skipped.");
+
     }
 
     @Override
