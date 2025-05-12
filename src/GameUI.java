@@ -293,6 +293,8 @@ public void displayAllWinConditions(List<Player> players) {
             updateWinConditionDisplay(player1WinConditionLabel, state.getPlayers().get(0));
             updateWinConditionDisplay(player2WinConditionLabel, state.getPlayers().get(1));
 
+
+
             // Update game history
             StringBuilder history = new StringBuilder("Recent movies: \n");
             List<Movie> recentMovies = state.getPlayedMoviesHistory();
@@ -302,6 +304,16 @@ public void displayAllWinConditions(List<Player> players) {
                 Movie movie = recentMovies.get(i);
                 history.append(movie.getTitle()).append(" (").append(movie.getReleaseYear()).append(")\n");
             }
+
+            // show last connection made
+            List<Move> moveHistory = state.getMoveHistory();
+            if (!moveHistory.isEmpty()) {
+                Move lastMove = moveHistory.get(moveHistory.size() - 1);
+                String connectionType = lastMove.getConnectionType().toString().toLowerCase();
+                String connectionValue = lastMove.getConnectionValue();
+                history.append("Last connection: ").append(connectionType).append(" – ").append(connectionValue).append("\n");
+            }
+
             historyLabel.setText(history.toString());
 
 
@@ -441,11 +453,11 @@ public void displayAllWinConditions(List<Player> players) {
                             true, true)));
 
             // game summary
-            panel.addComponent(new Label("Final Score: " + winner.getScore())
-                    .setLayoutData(GridLayout.createLayoutData(
-                            GridLayout.Alignment.CENTER,
-                            GridLayout.Alignment.CENTER,
-                            true, true)));
+//            panel.addComponent(new Label("Final Score: " + winner.getScore())
+//                    .setLayoutData(GridLayout.createLayoutData(
+//                            GridLayout.Alignment.CENTER,
+//                            GridLayout.Alignment.CENTER,
+//                            true, true)));
 
             // play again button
             Button quitButton = new Button("Quit", () -> {

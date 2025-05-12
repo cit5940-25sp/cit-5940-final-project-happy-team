@@ -96,13 +96,31 @@ public class GameState {
             }
         }
 
-        // otherwise search for any connection that works
-        for(Move.ConnectionType eachType: Move.ConnectionType.values()){
+//        // otherwise search for any connection that works
+//        for(Move.ConnectionType eachType: Move.ConnectionType.values()){
+//            List<String> nextMovieConnections = nextMovie.getConnections(eachType);
+//            for (String value: nextMovieConnections){
+//                if (currentMovie.hasConnection(eachType, value)){
+//                    Move candidate = new Move (player, nextMovie, eachType, value);
+//                    if (isValidMove(candidate)){
+//                        return Optional.of(candidate);
+//                    }
+//                }
+//            }
+//        }
+
+        // try to build a move using any valid connection (excluding GENRE connections)
+        for (Move.ConnectionType eachType : Move.ConnectionType.values()) {
+            // skip GENRE type as it's not a valid connection method
+            if (eachType == Move.ConnectionType.GENRE) {
+                continue;
+            }
+
             List<String> nextMovieConnections = nextMovie.getConnections(eachType);
-            for (String value: nextMovieConnections){
-                if (currentMovie.hasConnection(eachType, value)){
-                    Move candidate = new Move (player, nextMovie, eachType, value);
-                    if (isValidMove(candidate)){
+            for (String value : nextMovieConnections) {
+                if (currentMovie.hasConnection(eachType, value)) {
+                    Move candidate = new Move(player, nextMovie, eachType, value);
+                    if (isValidMove(candidate)) {
                         return Optional.of(candidate);
                     }
                 }
@@ -255,6 +273,11 @@ public class GameState {
         return null;
     }
 
+
+
+    public List<Move> getMoveHistory() {
+        return new ArrayList<>(moveHistory);  // returns a copy to keep it safe
+    }
 
 
 
