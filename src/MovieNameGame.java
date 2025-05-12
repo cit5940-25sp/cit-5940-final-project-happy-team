@@ -4,9 +4,9 @@ import java.util.List;
 
 public class MovieNameGame {
     public static void main(String[] args) throws IOException {
-        //intialize the database
+        //initialize the database
         //use loadAll to loadMovies and build index
-        //quit the program if cannot load data
+        //quit the program if it cannot load data
 
 
         // Set Lanterna to use Swing terminal
@@ -21,7 +21,7 @@ public class MovieNameGame {
             String creditsPath = "tmdb_5000_credits.csv";
             database.loadAll(moviesPath, creditsPath);
 
-            //show player name: computer: player 1; human: player 2
+            //show player name: : player 1;  player 2
             String name1 = "Player 1";
             String name2 = "Player 2";
 

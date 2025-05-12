@@ -45,11 +45,10 @@ public class MovieTest {
         assertTrue("Avatar should have Sigourney Weaver",
                 avatar.hasConnection(Move.ConnectionType.ACTOR, "Sigourney Weaver"));
 
-
     }
 
     @Test
-    public void testFindCommonCOnnections() {
+    public void testFindCommonConnections() {
         //test finding common connection between 2 movies
         List<String> avatarActors = avatar.getConnections(Move.ConnectionType.ACTOR);
         List<String> piratesActors = pirates.getConnections(Move.ConnectionType.ACTOR);

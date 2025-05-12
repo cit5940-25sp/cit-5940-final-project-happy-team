@@ -51,16 +51,16 @@ public class MoveTest {
                 Move.ConnectionType.ACTOR, move.getConnectionType());
         assertEquals("Move should tore the connection value",
                 "Tom Hanks", move.getConnectionValue());
-        //check timestamp is semt
+        //check timestamp is met
         long currenT = System.currentTimeMillis();
         long moveT = move.getTimestamp();
-        //allow 1 s for timestamp
+        //allow 1s for timestamp
         assertTrue("Timestamp should be close to current time",
                 Math.abs(currenT - moveT) < 1000);
 
     }
     @Test
-    public void testMovesWithSharedCOnnections() {
+    public void testMovesWithSharedConnections() {
         //create third movie that shares connections with both test movies
         Movie testMovie3 = new Movie(3, "Test Movie 3", 2023,
                 "Steven Spielberg", "Hans Zimmer",
@@ -89,6 +89,7 @@ public class MoveTest {
     }
 
     @Test
+    //test  if the connection value can be updated using the setter
     public void testSetConnectionValue() {
         Move move = new Move(p1, testMovie1, Move.ConnectionType.ACTOR, "Initial Actor");
         move.setConnectionValue("Updated Actor");
@@ -96,6 +97,7 @@ public class MoveTest {
     }
 
     @Test
+    //test if the connection type can be changed
     public void testSetConnectionType() {
         Move move = new Move(p1, testMovie1, Move.ConnectionType.ACTOR, "Some Actor");
         Move.ConnectionType newType = Move.ConnectionType.DIRECTOR;
@@ -104,6 +106,7 @@ public class MoveTest {
     }
 
     @Test
+    //test if toString returns the expected string format for a move
     public void testToString() {
         Player test = new Player("TestPlayer", null);
         Movie movie = testMovie1;

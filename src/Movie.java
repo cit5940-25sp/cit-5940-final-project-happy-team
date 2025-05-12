@@ -1,7 +1,6 @@
 import java.util.Arrays;
 import java.util.List;
 
-
 public class Movie {
 
     // private fields for each Movie object
@@ -86,10 +85,6 @@ public class Movie {
         }
     }
 
-
-
-
-
     // getters (9 getters for the 9 fields)
     public int getId() {
         return id;
@@ -133,7 +128,6 @@ public class Movie {
     public void setComposer(String composer) {
         this.composer = composer;
     }
-
 
 
 }

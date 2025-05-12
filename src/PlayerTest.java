@@ -5,8 +5,8 @@ import static org.junit.Assert.*;
 
 public class PlayerTest {
     @Test
-    public void intialize() {
-        //given a new wincondition, player name
+    public void initialize() {
+        //given a new winCondition, player name
         WinCondition wc = new WinCondition(Move.ConnectionType.DIRECTOR,"Nolan",3);
         Player p = new Player("Charlie",wc);
 
@@ -48,8 +48,8 @@ public class PlayerTest {
                 3,p.getScore());
     }
     @Test
-    public void testPlayerWithSameWinCOndition() {
-        //test two players wiht the same win condition type but different values
+    public void testPlayerWithSameWinCondition() {
+        //test two players with the same win condition type but different values
         WinCondition horr = new WinCondition(Move.ConnectionType.GENRE, "Horror", 3);
         WinCondition actionCondition = new WinCondition(Move.ConnectionType.GENRE, "Action",3);
 

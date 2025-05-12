@@ -1,8 +1,5 @@
-
 import org.junit.Before;
 import org.junit.Test;
-
-
 import java.io.IOException;
 import java.util.*;
 import static org.junit.Assert.*;
@@ -258,7 +255,7 @@ public class MovieDatabaseTest {
         assertNull("Should return null for non-existent cinematographer", nonExist);
     }
 
-    //compelte test
+    //complete test
     @Test
     public void testFull() throws IOException {
         MovieDatabase igDb = new MovieDatabase();
@@ -307,10 +304,10 @@ public class MovieDatabaseTest {
         assertTrue("James Cameron should have directed Avatar", found2);
 
         //assert composer index
-        Set<Movie> hornerMovies = igDb.getMovieByComposer("James Horner") ;
-        assertNotNull("James Horner should be indexed", hornerMovies);
+        Set<Movie> horMovies = igDb.getMovieByComposer("James Horner") ;
+        assertNotNull("James Horner should be indexed", horMovies);
         boolean found3 = false;
-        for (Movie m : hornerMovies) {
+        for (Movie m : horMovies) {
             if ("Avatar".equals(m.getTitle())) {
                 found3 = true;
                 break;

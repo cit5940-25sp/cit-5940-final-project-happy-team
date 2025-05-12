@@ -19,9 +19,9 @@ public class Move {
     // represents a Player's Move
     public Move(Player player, Movie moviePlayed,
                 ConnectionType connectionType, String connectionValue) {
-        // we dont fill in the timestamp when we create the obj,
+        // we don't fill in the timestamp when we create the obj,
         // because the timestamp is set to whatever
-        // time is current time and in GameContoller and gamestate when we determine
+        // time is current time and in GameController and gameState when we determine
         // if a move has passed time limit, we use this
 
         this.player = player;
@@ -57,11 +57,11 @@ public class Move {
 
 
     // setters (maybe just for connection type and connection value?)
-        // the setter for connectionType will be used in gamecontroller/gamestate when we update
+        // the setter for connectionType will be used in gameController/gameState when we update
         // the actual connection type that this Move creates
 
         // we also need a setter for connection value, because similarly, in
-        // gamecontroller/gamestate we will know what actor/genre/director etc
+        // gameController/gameState we will know what actor/genre/director etc.
         // is what connection
 
     public void setConnectionValue(String connectionValue) {
@@ -85,4 +85,3 @@ public class Move {
     }
 
 }
-

@@ -35,7 +35,7 @@ public class WinCondition {
     }
 
     //random generate the win condition based on the movie database
-    //default is genre based , but can also genreate other types of win condition
+    //default is genre based , but can also generate other types of win condition
     //-true is default version
     public static WinCondition random(MovieDatabase database, int targetCount) {
 
@@ -43,7 +43,7 @@ public class WinCondition {
     }
 
     //random generaes a win condition based on movie database
-    //allow specifying whehter to use only default (gener based) win conditions
+    //allow specifying whehter to use only default (genres based) win conditions
     //or to include all possible win condition types
     public static WinCondition random(MovieDatabase database, int targetCount,
                                       boolean defaultOnly) {
@@ -99,7 +99,7 @@ public class WinCondition {
                 if (randomMovie == null) {
                     continue;
                 }
-                //get conenctions of the selected type
+                //get connections of the selected type
                 List<String> connections = randomMovie.getConnections(selectedType);
                 if (connections == null || connections.isEmpty()) {
                     continue;

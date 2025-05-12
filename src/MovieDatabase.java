@@ -9,12 +9,11 @@ import org.apache.commons.csv.CSVRecord;
 
 //we use JSON parsing (GSon) because some fields in the CSV are stored as JSON arrays inside
 //a single CSV cell,  we use csv file paths so that loading from both IDE
-// and simple String.split() would make a mess
+// and simple String.split() would make a mess :)
 
 public class MovieDatabase {
 
     // fields
-
     // These maps will be filled out string (person name) to a Movie
     private Map<Integer, Movie> moviesById = new HashMap<>();
     private Map<String, Set<Movie>> actorIndex = new HashMap<>();
@@ -71,8 +70,6 @@ public class MovieDatabase {
                             year = Integer.parseInt(parts[0]);
                         }
                     }
-                   // System.out.println("Movie id: " + id + ", Title: " + title +
-                           // " , Release Date: " + rd + ", Parsed yr: " + year);
                 }
 
                 //try to parse genres if exist
@@ -104,8 +101,8 @@ public class MovieDatabase {
         }
     }
 
-    //read the credits CSV< parse cast (actors) and crew roles:
-    //Director, Original Music Composer, Writer, Director of Photography
+    //read the credits CSV and parse cast (actors) and crew roles:
+    //Connection: Director, Original Music Composer, Writer, Director of Photography
     public void loadCredits(String path) throws IOException {
         Path csv = Paths.get(path);
         if (!Files.exists(csv)) {
@@ -227,7 +224,7 @@ public class MovieDatabase {
     }
 
 
-    //return up to 5 movie titles that start with the given prefix (case-insensitive)
+    //return up to 5 movie titles that start with the given prefix
     public List<String> searchByTitlePrefix(String prefix) {
         if (prefix == null || prefix.isEmpty()) {
             return Collections.emptyList();
@@ -249,10 +246,7 @@ public class MovieDatabase {
 
     }
 
-
-    // getters (accessing set of Movies that have this element)
-
-    // retrieves Movie by its ID (it returns whatever Movie has that id)
+    // search Movie by its ID (it returns whatever Movie has that id)
     public Movie getMovieById(int id) {
         return moviesById.get(id);
     }
