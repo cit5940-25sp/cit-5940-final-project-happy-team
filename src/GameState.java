@@ -77,6 +77,11 @@ public class GameState {
     }
 
 
+    public MovieDatabase getDatabase() {
+        return database;
+    }
+
+
     // returns a Move (or empty) of a move that is valid for this movie and previous one
     // this validated Move will contain all the things we need to fill in the missing connection related values
     public Optional<Move> tryBuildMove(Player player, Movie nextMovie){
@@ -194,6 +199,12 @@ public class GameState {
 
 
 
+    public List<Player> getPlayers() {
+        return new ArrayList<>(players);
+    }
+
+
+
 
 
     public void setTimeExpired(boolean expired) {
@@ -256,12 +267,19 @@ public class GameState {
     public boolean applyCommand(Player player, Command cmd){
        List<Command> available = availablePowerUps.get(player);
        // if the list is not empty and this cmd is able to be removed
-       if (available != null && available.remove(cmd)){
-           // execute it
-           cmd.execute(this);
-           return true;
-       }
-       return false;
+        if (available != null) {
+            for (Command c : available) {
+                if (c.getClass().equals(cmd.getClass())) {
+                    available.remove(c);
+                    c.execute(this);
+                    System.out.println("Command " + c.getClass().getSimpleName() + " applied.");
+                    return true;
+                }
+            }
+        }
+        System.out.println("Command not found or already used.");
+        return false;
+
     }
 
     // not suppppperrrrr necessary, but a getter for:
@@ -290,8 +308,15 @@ public class GameState {
 
     // used when setting current movie (like in escapeCommand)
     public void setCurrentMovie(Movie currentMovie) {
+
+        System.out.println("setCurrentMovie called with: " + currentMovie.getTitle());
+
         this.currentMovie = currentMovie;
         playedMoviesHistory.add(currentMovie);
+
+
+
+
     }
 
     // used when i need to quickly get the opponent player to the current player

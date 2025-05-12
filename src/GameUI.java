@@ -38,6 +38,12 @@ public class GameUI {
     private Autocomplete ac;
     private GameState gameState;
 
+    private Label player1WinConditionLabel;
+    private Label player2WinConditionLabel;
+    private Label player1PowerupsLabel;
+    private Label player2PowerupsLabel;
+
+
 
 //    private ScheduledExecutorService scheduler;
 //    // we give them 30 seconds before time is up
@@ -66,9 +72,18 @@ public class GameUI {
 
         buildUI();
         setUpListeners();
-        showMainWindow();
+        //showMainWindow();
         setUpTimer();
-        startTurnTimer();
+        //startTurnTimer();
+    }
+
+
+    public MultiWindowTextGUI getGui() {
+        return gui;
+    }
+
+    public Window getMainWindow() {
+        return mainWindow;
     }
 
 
@@ -91,6 +106,15 @@ public class GameUI {
         panel.addComponent(playerInfoLabel);
         timerLabel = new Label("30 seconds remaining");
         panel.addComponent(timerLabel);
+
+        player1WinConditionLabel = new Label("Player 1 Win Condition will appear here")
+                .setForegroundColor(TextColor.ANSI.GREEN);
+        player2WinConditionLabel = new Label("Player 2 Win Condition will appear here")
+                .setForegroundColor(TextColor.ANSI.GREEN);
+
+        panel.addComponent(player1WinConditionLabel);
+        panel.addComponent(player2WinConditionLabel);
+
         historyLabel = new Label("Game history will appear here");
         panel.addComponent(historyLabel).setLayoutData(GridLayout.createLayoutData(
                 GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true,
@@ -106,8 +130,21 @@ public class GameUI {
         panel.addComponent(new Label("Suggestions:"));
         panel.addComponent(suggestions);
 
+
+        player1PowerupsLabel = new Label("Player 1 Powerups:").setForegroundColor(TextColor.ANSI.YELLOW);
+        player2PowerupsLabel = new Label("Player 2 Powerups:").setForegroundColor(TextColor.ANSI.YELLOW);
+
+        panel.addComponent(player1PowerupsLabel);
+        panel.addComponent(player2PowerupsLabel);
+
+
         mainWindow.setComponent(panel);
+        inputBox.takeFocus();
     }
+
+
+
+
 
     // update player input live
     private void setUpListeners() {
@@ -119,7 +156,7 @@ public class GameUI {
             }
         });
     }
-    private void showMainWindow() {
+    public void showMainWindow() {
         gui.addWindowAndWait(mainWindow);
     }
 
@@ -203,50 +240,60 @@ public class GameUI {
 //
 //    // displays their win condition for the players to see, including
 //    // their current progress towards it
-    public void displayWinCondition (Player player){
-        gui.getGUIThread().invokeLater(() -> {
-            // create panel for win condition display
-            Panel winConditionPanel = new Panel();
-            winConditionPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+public void displayAllWinConditions(List<Player> players) {
+    gui.getGUIThread().invokeLater(() -> {
+        // Create a panel that spans both columns to hold all win conditions
+        Panel allWinConditionsPanel = new Panel();
+        allWinConditionsPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+
+        for (Player player : players) {
             WinCondition wc = player.getWinCondition();
+            String title = player.getName() + "'s Win Condition: " + wc.getType() + " – " + wc.getValue();
+            String progress = "Progress: " + wc.getProgress() + "/" + wc.getTarget();
 
-            // clear previous components if they exist
-            winConditionPanel.removeAllComponents();
+            Label titleLabel = new Label(title).setForegroundColor(TextColor.ANSI.GREEN);
+            Label progressLabel = new Label(progress).setForegroundColor(TextColor.ANSI.BLACK);
 
-            // player name
-            winConditionPanel.addComponent(new Label(player.getName() + "'s Win Condition")
-                    .setForegroundColor(background));
+            Panel singleWinPanel = new Panel();
+            singleWinPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+            singleWinPanel.addComponent(titleLabel);
+            singleWinPanel.addComponent(progressLabel);
 
-            // progress bar
-            String prog = wc.getDescription();
-            winConditionPanel.addComponent(new Label(prog).setForegroundColor(foreground));
+            allWinConditionsPanel.addComponent(singleWinPanel);
+        }
 
-            Panel mainPanel = (Panel) mainWindow.getComponent();
-            mainPanel.addComponent(winConditionPanel.setLayoutData(
-                    GridLayout.createLayoutData(
-                            GridLayout.Alignment.FILL, GridLayout.Alignment.BEGINNING,
-                            true, false,
-                            2, 1
-                    )
-            ));
+        // Add to main window
+        Panel mainPanel = (Panel) mainWindow.getComponent();
+        mainPanel.addComponent(allWinConditionsPanel.setLayoutData(
+                GridLayout.createLayoutData(
+                        GridLayout.Alignment.FILL,
+                        GridLayout.Alignment.BEGINNING,
+                        true, false,
+                        2, 1
+                )
+        ));
 
-            // refresh UI
-            try {
-                screen.refresh();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
+        try {
+            screen.refresh();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    });
+}
 
-    // show current GameState on our screen
     public void showGameState(GameState state) {
-        Player current = state.getCurrentPlayer();
-        gui.getGUIThread().invokeLater(() -> {
-            playerInfoLabel.setText(current.getName() + "'s turn - ");
-            displayWinCondition(current);
+        Player currentPlayer = state.getCurrentPlayer();
+        Player opponentPlayer = state.getOpponentPlayer(); // Assuming this method exists
 
-            // update game history
+        gui.getGUIThread().invokeLater(() -> {
+            // Update player turn info
+            playerInfoLabel.setText(currentPlayer.getName() + "'s turn");
+
+            // Update both players' win condition displays
+            updateWinConditionDisplay(player1WinConditionLabel, state.getPlayers().get(0));
+            updateWinConditionDisplay(player2WinConditionLabel, state.getPlayers().get(1));
+
+            // Update game history
             StringBuilder history = new StringBuilder("Recent movies: \n");
             List<Movie> recentMovies = state.getPlayedMoviesHistory();
             // display last 5 movies
@@ -257,51 +304,125 @@ public class GameUI {
             }
             historyLabel.setText(history.toString());
 
-            // start timer
+
+            List<Player> players = state.getPlayers();
+
+            List<Command> p1Commands = state.getPowerUpsFor(players.get(0));
+            if (p1Commands.isEmpty()) {
+                player1PowerupsLabel.setText("Player 1 Powerups: none");
+                player1PowerupsLabel.setForegroundColor(TextColor.ANSI.BLACK);
+            } else {
+                StringBuilder p1Powerups = new StringBuilder("Player 1 Powerups: ");
+                for (Command cmd : p1Commands) {
+                    p1Powerups.append("!").append(cmd.getClass().getSimpleName().replace("Command", "").toLowerCase()).append(" ");
+                }
+                player1PowerupsLabel.setText(p1Powerups.toString());
+                player1PowerupsLabel.setForegroundColor(TextColor.ANSI.YELLOW);
+            }
+
+
+            List<Command> p2Commands = state.getPowerUpsFor(players.get(1));
+            if (p2Commands.isEmpty()) {
+                player2PowerupsLabel.setText("Player 2 Powerups: none");
+                player2PowerupsLabel.setForegroundColor(TextColor.ANSI.BLACK);
+            } else {
+                StringBuilder p2Powerups = new StringBuilder("Player 2 Powerups: ");
+                for (Command cmd : p2Commands) {
+                    p2Powerups.append("!").append(cmd.getClass().getSimpleName().replace("Command", "").toLowerCase()).append(" ");
+                }
+                player2PowerupsLabel.setText(p2Powerups.toString());
+                player2PowerupsLabel.setForegroundColor(TextColor.ANSI.YELLOW);
+            }
+
+
+
+
+
+
+
+            // Always restart the timer on a new turn
+            stopTimer();
             startTurnTimer();
+
 
             inputBox.takeFocus();
         });
     }
 
-    // prompt the player for an action
+
+    // Helper method to update a win condition label
+    private void updateWinConditionDisplay(Label label, Player player) {
+        WinCondition wc = player.getWinCondition();
+        String type = wc.getType().toString();
+        String value = wc.getValue();
+        int progress = wc.getProgress();
+        int required = wc.getTarget();
+
+        label.setText(player.getName() + "'s Win Condition: " + type + " – " + value
+                + " | Progress: " + progress + "/" + required);
+    }
+
+
+
+
+
     public String promptPlayer(Player currentPlayer) {
         // clear input box
         gui.getGUIThread().invokeLater(() -> {
             inputBox.setText("");
             inputBox.takeFocus();
+            System.out.println("Input box cleared and focused for " + currentPlayer.getName());
         });
 
         try {
             screen.refresh();
+            System.out.println("Screen refreshed, waiting for input...");
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        // wait for player
-        while (true) {
-            // check for non-blocking
-            KeyStroke keyStroke = null;
-            try {
-                keyStroke = screen.pollInput();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        // Create a final container for the result
+        final String[] result = new String[1];
+        final boolean[] done = new boolean[1];
 
-            if (keyStroke != null) {
-                if (keyStroke.getKeyType() == KeyType.Enter) {
-                    return inputBox.getText();
-                } else if (keyStroke.getKeyType() == KeyType.Escape) {
-                    return null;
+        // Set up a special listener for the Enter key
+        inputBox.setInputFilter((interactionInfo, keyStroke) -> {
+            if (keyStroke.getKeyType() == KeyType.Enter) {
+                // Capture the current text when Enter is pressed
+                result[0] = inputBox.getText();
+                done[0] = true;
+                System.out.println("Enter pressed! Input text: " + result[0]);
+                return false; // Don't pass Enter to the text box
+            }
+            // For EOF signals, treat them as possible Enter keys
+            if (keyStroke.getKeyType() == KeyType.EOF) {
+                System.out.println("EOF detected, checking if it's Enter");
+
+                // If there's text in the input box, treat EOF as Enter
+                if (inputBox.getText() != null && !inputBox.getText().isEmpty()) {
+                    result[0] = inputBox.getText();
+                    done[0] = true;
+                    System.out.println("Treating EOF as Enter. Input text: " + result[0]);
+                    return false;
                 }
             }
+            return true; // Pass other keys to the text box
+        });
+
+        // Wait for the result
+        while (!done[0]) {
             try {
-                Thread.sleep(50); // to reduce CPU usage
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                return null;
+                break;
             }
         }
+
+        // Remove the special input filter when done
+        inputBox.setInputFilter(null);
+
+        return result[0];
     }
 
     public void showGameEnd(Player winner) {
@@ -346,26 +467,52 @@ public class GameUI {
 
 //     this is so if the user types in something that doesn't connect
 //     they get an error prompt
-    public void showError(String message) throws IOException{
-        // we were inspired from online forms where there would be
-        // "please try again" in red letters when we have a typo or invalid input
-        gui.getGUIThread().invokeLater(() -> {
-            // show error
-            Label error = new Label(message).setForegroundColor(TextColor.ANSI.RED);
+public void showError(String message) throws IOException {
+    // IMPORTANT: Don't stop or reset the timer when showing an error
+    gui.getGUIThread().invokeLater(() -> {
+        // Show error
+        Label error = new Label(message).setForegroundColor(TextColor.ANSI.RED);
 
-            // create popup
-            Panel errorPanel = new Panel();
-            errorPanel.setLayoutManager(new GridLayout(1));
-            errorPanel.addComponent(error);
-            errorPanel.addComponent(new Button("OK", () -> {
-            }));
+        // Create popup
+        Panel errorPanel = new Panel();
+        errorPanel.setLayoutManager(new GridLayout(1));
+        errorPanel.addComponent(error);
 
-            BasicWindow errorWindow = new BasicWindow("Error");
-            errorWindow.setComponent(errorPanel);
-            errorWindow.setHints(Collections.singletonList(Window.Hint.CENTERED));
-            gui.addWindow(errorWindow);
+        // Create the window first so we can reference it in the button action
+        BasicWindow errorWindow = new BasicWindow("Error");
+
+        // Create OK button with action to close the window
+        Button okButton = new Button("OK", () -> {
+            gui.removeWindow(errorWindow);
+            try {
+                // Refresh the screen but DON'T call showGameState or reset timer
+                screen.refresh();
+                // Ensure input focus returns to the main input box
+                inputBox.takeFocus();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
-    }
+        errorPanel.addComponent(okButton);
+
+        // Set window properties
+        errorWindow.setComponent(errorPanel);
+        errorWindow.setHints(Collections.singletonList(Window.Hint.CENTERED));
+
+        // Add window to GUI
+        gui.addWindow(errorWindow);
+
+        // Give focus to OK button
+        okButton.takeFocus();
+
+        // Ensure screen updates
+        try {
+            screen.refresh();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    });
+}
 
 
     // VERY IMPORTANT:

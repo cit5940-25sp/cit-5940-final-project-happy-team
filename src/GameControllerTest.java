@@ -77,7 +77,7 @@ public class GameControllerTest {
             }
         };
 
-        controller = new GameController(database, fakeUI, Arrays.asList(player));
+        controller = new GameController(testState, fakeUI);
     }
 
     @Test

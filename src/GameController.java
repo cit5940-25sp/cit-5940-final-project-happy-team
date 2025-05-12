@@ -12,23 +12,24 @@ public class GameController {
 
 
     // constructs a controller with required info
-    public GameController(MovieDatabase database, GameUI ui, List<Player> players){
-        this.database = database;
+    public GameController(GameState state, GameUI ui) {
+        this.state = state;
         this.ui = ui;
-        this.state = new GameState(database, players);
+        this.database = state.getDatabase();
     }
+
 
 
     // game loop start (this is the method that starts the game loop)
     // initializes the game state
     public void start() throws IOException {
         // call the initial game state (random first movie)
-        state.initialGameState();
+       // state.initialGameState();
 
         // while it's not isGameOver yet, keep looping this
         while(!state.isGameOver()){
             // UI -- show the game state + prompt the current player for input
-            ui.showGameState(state);
+           // ui.showGameState(state);
             String input = ui.promptPlayer(state.getCurrentPlayer());
             Player currentPlayer = state.getCurrentPlayer();
 
@@ -62,6 +63,7 @@ public class GameController {
                         // if it was a escape command, set mustCallNextTurn to true so we nextTurn()
                         mustCallNextTurn = true;
                     }
+                    ui.showGameState(state);
                 }
             // if there is nothing in commandMaybe, then it's a MOVIE
             } else {
@@ -88,6 +90,7 @@ public class GameController {
                 // call this state.applyMove(move);
                 state.applyMove(newMove);
                 mustCallNextTurn = true;
+                ui.showGameState(state);
             }
 
 
@@ -103,19 +106,30 @@ public class GameController {
     }
 
 
-    // helper function too parse a string input for a command
+    // helper func
     private Optional<Command> getCommandFromInput(String input) {
+        if (!input.startsWith("!")) {
+            System.out.println("Not a command: " + input);
+            return Optional.empty();
+        }
+
         switch (input.toLowerCase()) {
-            case "skip":
+            case "!skip":
+                System.out.println("Parsed command: !skip");
                 return Optional.of(new SkipCommand());
-            case "block":
+            case "!block":
+                System.out.println("Parsed command: !block");
                 return Optional.of(new BlockCommand());
-            case "escape":
+            case "!escape":
+                System.out.println("Parsed command: !escape");
                 return Optional.of(new EscapeCommand(database));
             default:
+                System.out.println("Unknown command: " + input);
                 return Optional.empty();
         }
     }
+
+
 
 
 }

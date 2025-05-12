@@ -55,15 +55,30 @@ public class MovieNameGame {
             Autocomplete autocomplete = new Autocomplete(allMovieTitles);
             ui.setAutocomplete(autocomplete);
 
-
-
+            ui.showGameState(gameState);
 
             //create controller and start the game
-            GameController controller = new GameController(database, ui, players);
-            controller.start();
+            GameController controller = new GameController(gameState, ui);
+
+           // GameController controller = new GameController(database, ui, players);
+
+            //THREAD
+            // Start the controller in a new thread
+            new Thread(() -> {
+                try {
+                    controller.start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+
+
+            ui.showMainWindow();
+
+            //controller.start();
 
             //exit and clean
-            ui.closeUI();
+            //ui.closeUI();
         } catch (Exception e) {
             System.err.println("Error loading database files: " + e.getMessage());
             e.printStackTrace();
