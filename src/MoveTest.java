@@ -88,4 +88,31 @@ public class MoveTest {
 
     }
 
+    @Test
+    public void testSetConnectionValue() {
+        Move move = new Move(p1, testMovie1, Move.ConnectionType.ACTOR, "Initial Actor");
+        move.setConnectionValue("Updated Actor");
+        assertEquals("Updated Actor", move.getConnectionValue());
+    }
+
+    @Test
+    public void testSetConnectionType() {
+        Move move = new Move(p1, testMovie1, Move.ConnectionType.ACTOR, "Some Actor");
+        Move.ConnectionType newType = Move.ConnectionType.DIRECTOR;
+        move.setConnectionType(newType);
+        assertEquals(newType, move.getConnectionType());
+    }
+
+    @Test
+    public void testToString() {
+        Player test = new Player("TestPlayer", null);
+        Movie movie = testMovie1;
+        Move.ConnectionType testType = Move.ConnectionType.GENRE;
+        String testValue = "Drama";
+        Move move = new Move(test, movie, testType, testValue);
+        String exp = "TestPlayer plays Test Movie 1 via GENRE (Drama)";
+        String actual = move.toString();
+        assertEquals(exp, actual);
+    }
+
 }

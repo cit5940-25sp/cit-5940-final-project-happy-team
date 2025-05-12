@@ -33,8 +33,8 @@ public class MovieDatabaseTest {
         //test non_exist movie
         Movie nonExistent = db.getMovieById(9999999);
         assertNull("SHould return null for non-existent movie id", nonExistent);
-
     }
+
     @Test
     public void testGetRandomMovie() {
         //test multiple random movies
@@ -317,6 +317,22 @@ public class MovieDatabaseTest {
             }
         }
         assertTrue("James Horner should have composed Avatar", found3);
+    }
+
+    @Test
+    public void testGetAllMovieIds() {
+        Set<Integer> allIds = db.getAllMovieIds();
+        assertNotNull(allIds);
+        assertTrue(allIds.size() > 1000);
+        assertTrue(allIds.contains(19995));
+        assertTrue(allIds.contains(206647));
+    }
+
+    @Test
+    public void testGetMovieByTitle() {
+        Movie avatar = db.getMovieByTitle("avATar");
+        assertNotNull(avatar);
+        assertEquals(19995, avatar.getId());
     }
 
 }

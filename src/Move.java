@@ -84,8 +84,5 @@ public class Move {
                 + connectionType + " (" + connectionValue + ")";
     }
 
-
-
-
 }
 

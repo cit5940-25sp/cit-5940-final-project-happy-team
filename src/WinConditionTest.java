@@ -9,7 +9,7 @@ public class WinConditionTest {
 
     @Before
     public void setUp() throws Exception {
-        //intialize the movie database with test data
+        // initialize the movie database with test data
         db = new MovieDatabase();
         String movies = "tmdb_5000_movies.csv";
         String credits = "tmdb_5000_credits.csv";

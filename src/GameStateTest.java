@@ -253,10 +253,26 @@ public class GameStateTest {
                 "Connection value should match shared attribute");
     }
 
+    @Test
+    public void testGetPlayers() {
+        List<Player> players = state.getPlayers();
+        assertEquals(2, players.size());
+    }
 
+    @Test
+    public void testGetMoveHistory() {
+        List<Move> moveHist = state.getMoveHistory();
+        assertTrue(moveHist.isEmpty());
 
-
-
-
+        // apply moves
+        Move move1 = new Move(player1, movie2, Move.ConnectionType.ACTOR, "Shared Actor");
+        Move move2 = new Move(player2, movie1, Move.ConnectionType.ACTOR, "Shared Actor");
+        state.applyMove(move1);
+        state.applyMove(move2);
+        List<Move> updatedMoveHist = state.getMoveHistory();
+        assertEquals(2, updatedMoveHist.size());
+        assertEquals(move1, updatedMoveHist.get(0));
+        assertEquals(move2, updatedMoveHist.get(1));
+    }
 
 }

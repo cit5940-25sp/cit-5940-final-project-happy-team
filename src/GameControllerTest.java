@@ -15,8 +15,6 @@ public class GameControllerTest {
     private Movie movie1;
     private Movie movie2;
 
-
-
     // to make this easier we want to make it so the player can meet their win
     // condition after one move.
     // we manually set the win condition to be something achievable, and have

@@ -103,4 +103,17 @@ public class CommandTest {
 
         assertEquals(player2, state.getCurrentPlayer(), "BlockCommand should skip opponent's turn");
     }
+
+    @Test
+    public void testGetName() {
+        Command blk = new BlockCommand();
+        Command esc = new EscapeCommand(db);
+        Command skip = new SkipCommand();
+        String expBlk = "Block";
+        String expEsc = "Escape";
+        String expSkip = "Skip";
+        assertEquals(expBlk, blk.getName());
+        assertEquals(expEsc, esc.getName());
+        assertEquals(expSkip, skip.getName());
+    }
 }
