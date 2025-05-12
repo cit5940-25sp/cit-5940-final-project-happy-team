@@ -137,6 +137,12 @@ public class GameState {
     // if already used, or if surpasses connection usage limit, or the connection
     // has no match, then  = false
     public boolean isValidMove(Move move) {
+
+
+        if (move.getConnectionType() == Move.ConnectionType.GENRE) {
+            return false;
+        }
+
         // check if this move is a valid connection by comparing the current
         // movie (prev) and the one from the move
         // that the player wants to play (getMoviePlayed from the Move)
@@ -204,10 +210,44 @@ public class GameState {
         Player currentPlayer = getCurrentPlayer();
         WinCondition wc = currentPlayer.getWinCondition();
 
-        if (move.getConnectionType() == wc.getType() && move.getConnectionValue()
-                .equals(wc.getValue())) {
-            wc.recordProgress();
+        if (wc.getType() == Move.ConnectionType.GENRE) {
+            // for genre, just check if the played movie has the right genre
+            if (move.getMoviePlayed().getGenres().contains(wc.getValue())) {
+                wc.recordProgress();
+            }
+        } else {
+            // all other types, check if the connection used matches the win condition
+            if (move.getConnectionType() == wc.getType() &&
+                    move.getConnectionValue().equals(wc.getValue())) {
+                wc.recordProgress();
+            }
         }
+
+
+
+
+
+
+
+//        if (move.getConnectionType() == wc.getType() && move.getConnectionValue()
+//                .equals(wc.getValue())) {
+//            wc.recordProgress();
+//        }
+
+//        if (wc.getType() == Move.ConnectionType.GENRE) {
+//            if (move.getMoviePlayed().getGenres().contains(wc.getValue())) {
+//                wc.recordProgress();
+//            }
+//        } else {
+//            if (move.getConnectionType() == wc.getType() &&
+//                    move.getConnectionValue().equals(wc.getValue())) {
+//                wc.recordProgress();
+//            }
+//        }
+
+
+
+
     }
 
 
