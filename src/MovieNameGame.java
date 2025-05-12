@@ -26,8 +26,10 @@ public class MovieNameGame {
             String name2 = "Player 2";
 
             // generate the winCondition randomly
-            WinCondition wc1 = WinCondition.random(database,5);
-            WinCondition wc2 = WinCondition.random(database,5);
+            //true: default genre
+            //false: get winCondition randomly
+            WinCondition wc1 = WinCondition.random(database,5,true);
+            WinCondition wc2 = WinCondition.random(database,5,true);
 
             //build player list - based on player 1 and 2
             //list of players
