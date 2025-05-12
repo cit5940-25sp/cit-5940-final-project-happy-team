@@ -17,7 +17,7 @@ public class WinConditionTest {
     }
 
     @Test
-    public void testWinCOnditionConstruction() {
+    public void testWinConditionConstruction() {
         WinCondition cond = new WinCondition(Move.ConnectionType.GENRE, "Action", 5);
         assertEquals("Type should be GENRE", Move.ConnectionType.GENRE, cond.getType());
         assertEquals("Value should be Action", "Action", cond.getValue());
