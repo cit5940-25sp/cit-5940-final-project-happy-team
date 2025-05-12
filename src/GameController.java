@@ -23,7 +23,7 @@ public class GameController {
     // initializes the game state
     public void start() throws IOException {
         // call the initial game state (random first movie)
-        state.initialGameState();
+       // state.initialGameState();
 
         // while it's not isGameOver yet, keep looping this
         while (!state.isGameOver()) {

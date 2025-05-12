@@ -15,6 +15,9 @@ public class GameControllerTest {
     private Movie movie1;
     private Movie movie2;
 
+    private GameState testState;
+
+
     // to make this easier we want to make it so the player can meet their win
     // condition after one move.
     // we manually set the win condition to be something achievable, and have
@@ -48,7 +51,7 @@ public class GameControllerTest {
         player = new Player("Player 0", new WinCondition(Move.ConnectionType.ACTOR, "Actor X", 1));
 
         List<Player> players = Collections.singletonList(player);
-        GameState testState = new GameState(database, players);
+        testState = new GameState(database, players);  // use the class field
 
 
         // fake/rigged UI that always returns "movie two" as input
@@ -81,6 +84,8 @@ public class GameControllerTest {
 
     @Test
     public void testGameControllerAppliesValidMove() throws IOException {
+        testState.initialGameState();
+
         controller.start();
         // should process one move and end game since win condition is met
         assertTrue(player.getWinCondition().isMet(),
