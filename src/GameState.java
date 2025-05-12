@@ -97,18 +97,6 @@ public class GameState {
             }
         }
 
-//        // otherwise search for any connection that works
-//        for(Move.ConnectionType eachType: Move.ConnectionType.values()){
-//            List<String> nextMovieConnections = nextMovie.getConnections(eachType);
-//            for (String value: nextMovieConnections){
-//                if (currentMovie.hasConnection(eachType, value)){
-//                    Move candidate = new Move (player, nextMovie, eachType, value);
-//                    if (isValidMove(candidate)){
-//                        return Optional.of(candidate);
-//                    }
-//                }
-//            }
-//        }
 
         // try to build a move using any valid connection (excluding GENRE connections)
         for (Move.ConnectionType eachType : Move.ConnectionType.values()) {
@@ -116,7 +104,7 @@ public class GameState {
             if (eachType == Move.ConnectionType.GENRE) {
                 continue;
             }
-
+            // code gets here, its not of the connection type of GENRE
             List<String> nextMovieConnections = nextMovie.getConnections(eachType);
             for (String value : nextMovieConnections) {
                 if (currentMovie.hasConnection(eachType, value)) {
@@ -138,7 +126,7 @@ public class GameState {
     // has no match, then  = false
     public boolean isValidMove(Move move) {
 
-
+        // just in case
         if (move.getConnectionType() == Move.ConnectionType.GENRE) {
             return false;
         }
@@ -223,31 +211,6 @@ public class GameState {
             }
         }
 
-
-
-
-
-
-
-//        if (move.getConnectionType() == wc.getType() && move.getConnectionValue()
-//                .equals(wc.getValue())) {
-//            wc.recordProgress();
-//        }
-
-//        if (wc.getType() == Move.ConnectionType.GENRE) {
-//            if (move.getMoviePlayed().getGenres().contains(wc.getValue())) {
-//                wc.recordProgress();
-//            }
-//        } else {
-//            if (move.getConnectionType() == wc.getType() &&
-//                    move.getConnectionValue().equals(wc.getValue())) {
-//                wc.recordProgress();
-//            }
-//        }
-
-
-
-
     }
 
 
@@ -268,7 +231,6 @@ public class GameState {
     public List<Player> getPlayers() {
         return new ArrayList<>(players);
     }
-
 
 
 

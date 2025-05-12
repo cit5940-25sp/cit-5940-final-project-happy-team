@@ -106,7 +106,7 @@ public class GameController {
     }
 
 
-    // helper func
+    // helper func to parse command from input string
     private Optional<Command> getCommandFromInput(String input) {
         if (!input.startsWith("!")) {
             System.out.println("Not a command: " + input);
@@ -128,8 +128,5 @@ public class GameController {
                 return Optional.empty();
         }
     }
-
-
-
 
 }

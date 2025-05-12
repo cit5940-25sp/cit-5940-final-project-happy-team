@@ -1,5 +1,4 @@
 public class SkipCommand implements Command {
-   // private Player target;
     public SkipCommand() {
 
     }

@@ -10,9 +10,10 @@ public class EscapeCommand implements Command {
     public void execute(GameState state) {
         Movie newRandomMovie = database.getRandomMovie();
 
+        // escape gives us a new random movie that is played, like a free change
         state.setCurrentMovie(newRandomMovie);
 
-        // add this here if it doesn't clash with GameUI
+
         System.out.println("Escape power-up used! " +
                 "The new movie is " + newRandomMovie.getTitle() + "!");
     }
