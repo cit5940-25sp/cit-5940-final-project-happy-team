@@ -120,16 +120,15 @@ public class GameUI {
                 GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true,
                 true, 2, 1));
 
-        // input box
+
         inputBox = new TextBox(new TerminalSize(30, 1));
         panel.addComponent(new Label("Enter movie title:"));
         panel.addComponent(inputBox);
 
         // sugg box
         suggestions = new ActionListBox(new TerminalSize(30, 5));
-        panel.addComponent(new Label("Suggestions:"));
+        //panel.addComponent(new Label("Suggestions:"));
         panel.addComponent(suggestions);
-
 
         player1PowerupsLabel = new Label("Player 1 Powerups:")
                 .setForegroundColor(TextColor.ANSI.YELLOW);
