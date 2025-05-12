@@ -107,6 +107,8 @@ public class GameController {
 
 
     // helper func to parse command from input string
+    // I will use print statements here just for visibility (it goes against checkstyle, but terminal is
+    // separate from our game window anyway, so it won't be a nuisance
     private Optional<Command> getCommandFromInput(String input) {
         if (!input.startsWith("!")) {
             System.out.println("Not a command: " + input);
