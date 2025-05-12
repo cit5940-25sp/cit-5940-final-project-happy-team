@@ -45,7 +45,7 @@ public class MovieDatabase {
     // load data from a file to be indexed
     //load basic movie data: id, title, year, genres
     //genres come in as a JSON string, so we parse them with Gson
-    public void loadMovies (String path) throws IOException {
+    public void loadMovies(String path) throws IOException {
         Path csv = Paths.get(path);
         if (!Files.exists(csv)) {
             csv = Paths.get("src",path);
@@ -165,12 +165,12 @@ public class MovieDatabase {
     }
 
     // build index maps (lookup index) for actor, dir, writer, etc
-    public void buildIndexes(){
+    public void buildIndexes() {
         for (Movie m : moviesById.values()) {
             //index actors
             for (String a : m.getActors()) {
                 Set<Movie> s = actorIndex.get(a);
-                if ( s == null) {
+                if (s == null) {
                     s = new HashSet<>();
                     actorIndex.put(a,s);
                 }
@@ -228,7 +228,7 @@ public class MovieDatabase {
 
 
     //return up to 5 movie titles that start with the given prefix (case-insensitive)
-    public List<String> searchByTitlePrefix(String prefix){
+    public List<String> searchByTitlePrefix(String prefix) {
         if (prefix == null || prefix.isEmpty()) {
             return Collections.emptyList();
         }
@@ -253,7 +253,7 @@ public class MovieDatabase {
     // getters (accessing set of Movies that have this element)
 
     // retrieves Movie by its ID (it returns whatever Movie has that id)
-    public Movie getMovieById(int id){
+    public Movie getMovieById(int id) {
         return moviesById.get(id);
     }
 
@@ -281,31 +281,31 @@ public class MovieDatabase {
     }
 
     //getters for each index
-    public Set<Movie> getMovieByGenre(String genre){
+    public Set<Movie> getMovieByGenre(String genre) {
         return genreIndex.get(genre);
     }
 
-    public Set<Movie> getMovieByActor (String actor){
+    public Set<Movie> getMovieByActor(String actor) {
         return actorIndex.get(actor);
     }
 
-    public Set<Movie> getMovieByDirector (String director){
+    public Set<Movie> getMovieByDirector(String director) {
         return directorIndex.get(director);
     }
 
-    public Set<Movie> getMovieByComposer (String composer){
+    public Set<Movie> getMovieByComposer(String composer) {
         return composerIndex.get(composer);
     }
 
-    public Set<Movie> getMovieByCines (String cines){
+    public Set<Movie> getMovieByCines(String cines) {
         return cinesIndex.get(cines);
     }
 
-    public Set<Movie> getMovieByWriter (String writer){
+    public Set<Movie> getMovieByWriter(String writer) {
         return writerIndex.get(writer);
     }
 
-    public Set<Integer> getAllMovieIds () {
+    public Set<Integer> getAllMovieIds() {
         return new HashSet<>(moviesById.keySet());
 
     }

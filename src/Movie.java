@@ -24,8 +24,9 @@ public class Movie {
 
     // Constructor for Movie object (we create one Movie object for each movie in the database)
     // and we parse and fill this Movie object with the information we parsed
-    public Movie(int id, String title, int releaseYear, String director, String composer, List<String> actors,
-                 List<String> writers, List<String> cines, List<String> genres){
+    public Movie(int id, String title, int releaseYear, String director,
+                 String composer, List<String> actors, List<String> writers,
+                 List<String> cines, List<String> genres) {
         this.id = id;
         this.title = title;
         this.releaseYear = releaseYear;
@@ -49,11 +50,13 @@ public class Movie {
             case ACTOR:
                 return actors != null && actors.contains(value);
             case DIRECTOR:
-                return director != null && !director.isEmpty() && director.equals(value);
+                return director != null && !director.isEmpty() &&
+                        director.equals(value);
             case WRITER:
-                return writers !=null && writers.contains(value);
+                return writers != null && writers.contains(value);
             case COMPOSER:
-                return composer != null &&  !composer.isEmpty() && composer.equals(value);
+                return composer != null &&  !composer.isEmpty() &&
+                        composer.equals(value);
             case CINES:
                 return cines != null && cines.contains(value);
             case GENRE:
@@ -88,11 +91,11 @@ public class Movie {
 
 
     // getters (9 getters for the 9 fields)
-    public int getId(){
+    public int getId() {
         return id;
     }
 
-    public String getTitle(){
+    public String getTitle() {
         return title;
     }
 
@@ -127,7 +130,7 @@ public class Movie {
     public void setDirector(String director) {
         this.director = director;
     }
-    public void setComposer (String composer) {
+    public void setComposer(String composer) {
         this.composer = composer;
     }
 

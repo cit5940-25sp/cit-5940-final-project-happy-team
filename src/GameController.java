@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 
 public class GameController {
@@ -27,16 +26,16 @@ public class GameController {
        // state.initialGameState();
 
         // while it's not isGameOver yet, keep looping this
-        while(!state.isGameOver()){
+        while (!state.isGameOver()) {
             // UI -- show the game state + prompt the current player for input
-           // ui.showGameState(state);
+            // ui.showGameState(state);
             String input = ui.promptPlayer(state.getCurrentPlayer());
             Player currentPlayer = state.getCurrentPlayer();
 
             // parse input to determine if its a powerUP (skip, block, escape) or a Movie
             // convert the input string into a corresponding Command object
             // --- Parse logic
-            if (input == null || input.trim().isEmpty()){
+            if (input == null || input.trim().isEmpty()) {
                 // if the input is null or without spaces its empty (nothing but spaces)
                 ui.showError("Invalid input. Please try again!");
                 // keep looping until it no longer comes into this loop
@@ -50,8 +49,8 @@ public class GameController {
             // if its a command, call state.appluCommand(player, command)
             Optional<Command> commandMaybe = getCommandFromInput(input);
 
-            // SUPER IMPORTANT -- some powerups consume a "next turn" within themselves. We make sure we don't
-            // call double next turn
+            // SUPER IMPORTANT -- some powerups consume a "next turn" within themselves.
+            // We make sure we don't call double next turn
             boolean mustCallNextTurn = false;
 
             // if there is something in commandMaybe, then its a command
@@ -78,16 +77,17 @@ public class GameController {
                 // try building a Move with this Movie
                 Optional<Move> move = state.tryBuildMove(currentPlayer, guessedMovie);
                 Move newMove;
-                // If it returns Optional.empty(), show error via ui.showError("Invalid move. Try again.")
-                if (!move.isPresent()){
+                // If it returns Optional.empty(), show error via
+                // ui.showError("Invalid move. Try again.")
+                if (!move.isPresent()) {
                     ui.showError("Invalid move. Please try again!");
                     continue;
                 } else {
                     // if it IS present, then we can make newMove with this move
                     newMove = move.get();
                 }
-                // If present, continue, it means its a valid move and the game should continue like usual
-                // call this state.applyMove(move);
+                // If present, continue, it means it's a valid move and the game
+                // should continue like usual call this state.applyMove(move);
                 state.applyMove(newMove);
                 mustCallNextTurn = true;
                 ui.showGameState(state);

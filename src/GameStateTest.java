@@ -21,8 +21,10 @@ public class GameStateTest {
         ArrayList<String> cines = new ArrayList<>(Collections.singletonList("Cine A"));
         ArrayList<String> genres = new ArrayList<>(Collections.singletonList("Genre A"));
 
-        movie1 = new Movie(1, "Movie One", 2000, "Dir A", "Comp A", sharedActors, writers1, cines, genres);
-        movie2 = new Movie(2, "Movie Two", 2001, "Dir B", "Comp B", sharedActors, writers2, cines, genres);
+        movie1 = new Movie(1, "Movie One", 2000, "Dir A",
+                "Comp A", sharedActors, writers1, cines, genres);
+        movie2 = new Movie(2, "Movie Two", 2001, "Dir B",
+                "Comp B", sharedActors, writers2, cines, genres);
 
         movieCallCount = 0;
         db = new MovieDatabase() {
@@ -87,7 +89,8 @@ public class GameStateTest {
     public void testApplyMoveUpdatesState() {
         Move move = new Move(player1, movie2, Move.ConnectionType.ACTOR, "Shared Actor");
         state.applyMove(move);
-        assertEquals(movie2, state.getPlayedMoviesHistory().get(state.getPlayedMoviesHistory().size() - 1));
+        assertEquals(movie2, state.getPlayedMoviesHistory()
+                .get(state.getPlayedMoviesHistory().size() - 1));
     }
 
     @Test
@@ -148,9 +151,12 @@ public class GameStateTest {
 
     @Test
     public void testSetCurrentMovieAddsToHistory() {
-        Movie newMovie = new Movie(3, "New Movie", 2022, "Dir C", "Comp C", new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        Movie newMovie = new Movie(3, "New Movie", 2022, "Dir C",
+                "Comp C", new ArrayList<>(), new ArrayList<>(),
+                new ArrayList<>(), new ArrayList<>());
         state.setCurrentMovie(newMovie);
-        assertEquals(newMovie, state.getPlayedMoviesHistory().get(state.getPlayedMoviesHistory().size() - 1));
+        assertEquals(newMovie, state.getPlayedMoviesHistory()
+                .get(state.getPlayedMoviesHistory().size() - 1));
     }
 
     @Test
@@ -160,12 +166,14 @@ public class GameStateTest {
         Player p2 = state.getOpponentPlayer();
 
         // player 2 should be our opponent (using getOpponentPlayer())
-        assertEquals(p2, state.getOpponentPlayer(), "Opponent should be player 2 initially");
+        assertEquals(p2, state.getOpponentPlayer(),
+                "Opponent should be player 2 initially");
         // if we advance to next turn, (it's our opponents turn now)
         state.nextTurn();
 
         // the opponent player from the opponent's perspective is player 1
-        assertEquals(p1, state.getOpponentPlayer(), "After switching turn, opponent should be player 1");
+        assertEquals(p1, state.getOpponentPlayer(),
+                "After switching turn, opponent should be player 1");
     }
 
 
@@ -173,26 +181,32 @@ public class GameStateTest {
 
     @Test
     public void escapeCommandUpdatesHistoryAndMovie() {
-        Movie before = state.getPlayedMoviesHistory().get(state.getPlayedMoviesHistory().size() - 1);
+        Movie before = state.getPlayedMoviesHistory()
+                .get(state.getPlayedMoviesHistory().size() - 1);
         EscapeCommand escape = new EscapeCommand(db);
         escape.execute(state);
-        Movie after = state.getPlayedMoviesHistory().get(state.getPlayedMoviesHistory().size() - 1);
+        Movie after = state.getPlayedMoviesHistory()
+                .get(state.getPlayedMoviesHistory().size() - 1);
 
         assertNotEquals(before.getId(), after.getId());
-        assertEquals(after, state.getPlayedMoviesHistory().get(state.getPlayedMoviesHistory().size() - 1));
+        assertEquals(after, state.getPlayedMoviesHistory()
+                .get(state.getPlayedMoviesHistory().size() - 1));
     }
 
 
     // edge case -- it should select a different movie (don't use repeat one)
     @Test
     public void testEscapeCommandDoesNotRepeatUsedMovie() {
-        Movie before = state.getPlayedMoviesHistory().get(state.getPlayedMoviesHistory().size() - 1);
+        Movie before = state.getPlayedMoviesHistory()
+                .get(state.getPlayedMoviesHistory().size() - 1);
         EscapeCommand escape = new EscapeCommand(db);
         escape.execute(state);
-        Movie after = state.getPlayedMoviesHistory().get(state.getPlayedMoviesHistory().size() - 1);
+        Movie after = state.getPlayedMoviesHistory()
+                .get(state.getPlayedMoviesHistory().size() - 1);
 
         // Even if it's technically random, make sure we're not just replaying the same movie
-        assertNotEquals(before.getId(), after.getId(), "Escape should switch to a different movie");
+        assertNotEquals(before.getId(), after.getId(),
+                "Escape should switch to a different movie");
     }
 
     @Test
@@ -205,7 +219,8 @@ public class GameStateTest {
 
     @Test
     public void skipCommandAdvancesTurnAndRound() {
-        int beforeRound = state.getRoundsPlayed(); // make roundsPlayed public or use a getter
+        // make roundsPlayed public or use a getter
+        int beforeRound = state.getRoundsPlayed();
         Player before = state.getCurrentPlayer();
         new SkipCommand().execute(state);
         Player after = state.getCurrentPlayer();
@@ -222,13 +237,16 @@ public class GameStateTest {
         // currentMovie is movie1, we are trying to build a Move to movie2
         Optional<Move> maybeMove = state.tryBuildMove(player1, movie2);
 
-        assertTrue(maybeMove.isPresent(), "tryBuildMove should return a valid Move if a connection exists");
+        assertTrue(maybeMove.isPresent(),
+                "tryBuildMove should return a valid Move if a connection exists");
 
         Move move = maybeMove.get();
 
         // Verify the fields of the Move
-        assertEquals(player1, move.getPlayer(), "Move should be for the correct player");
-        assertEquals(movie2, move.getMoviePlayed(), "Move should target movie2");
+        assertEquals(player1, move.getPlayer(),
+                "Move should be for the correct player");
+        assertEquals(movie2, move.getMoviePlayed(),
+                "Move should target movie2");
         assertEquals(Move.ConnectionType.ACTOR, move.getConnectionType(),
                 "Connection type should match shared attribute");
         assertEquals("Shared Actor", move.getConnectionValue(),

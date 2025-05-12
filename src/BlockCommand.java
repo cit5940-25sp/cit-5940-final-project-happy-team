@@ -1,4 +1,4 @@
-public class BlockCommand implements Command{
+public class BlockCommand implements Command {
     private Player target;
 
     // BlockCommand will always be called so that it blocks the opposite player, so no setup needed
@@ -6,7 +6,8 @@ public class BlockCommand implements Command{
     }
 
 
-    // uses getOpponentPlayer from GameState to always have the target (the player we want to block) on other player
+    // uses getOpponentPlayer from GameState to always have the target (the player
+    // we want to block) on other player
     @Override
     public void execute(GameState state) {
         Player opposingPlayer = state.getOpponentPlayer();

@@ -7,7 +7,7 @@ public class Player {
 
 
     // constructor
-    public Player (String name, WinCondition winCondition){
+    public Player(String name, WinCondition winCondition) {
         this.name = name;
         this.winCondition = winCondition;
     }
@@ -29,7 +29,7 @@ public class Player {
 
     //increments player's score and also records progress toward their win condition
     // should be called when a player makes a valid move that contributes to their win condition
-    public void incrementScore(){
+    public void incrementScore() {
         score++;
         winCondition.recordProgress();
     }

@@ -1,5 +1,4 @@
-public class Move
-{
+public class Move {
 
    // fields
     private Player player;
@@ -18,8 +17,10 @@ public class Move
 
     // constructor for a Move object
     // represents a Player's Move
-    public Move(Player player, Movie moviePlayed, ConnectionType connectionType, String connectionValue){
-        // we dont fill in the timestamp when we create the obj, because the timestamp is set to whatever
+    public Move(Player player, Movie moviePlayed,
+                ConnectionType connectionType, String connectionValue) {
+        // we dont fill in the timestamp when we create the obj,
+        // because the timestamp is set to whatever
         // time is current time and in GameContoller and gamestate when we determine
         // if a move has passed time limit, we use this
 
@@ -59,14 +60,15 @@ public class Move
         // the setter for connectionType will be used in gamecontroller/gamestate when we update
         // the actual connection type that this Move creates
 
-        // we also need a setter for connection value, because similarly, in gamecontroller/gamestate
-        // we will know what actor/genre/director etc is what connection
+        // we also need a setter for connection value, because similarly, in
+        // gamecontroller/gamestate we will know what actor/genre/director etc
+        // is what connection
 
     public void setConnectionValue(String connectionValue) {
         this.connectionValue = connectionValue;
     }
 
-    public void setConnectionType(ConnectionType connectionType){
+    public void setConnectionType(ConnectionType connectionType) {
         this.connectionType = connectionType;
     }
 
@@ -76,9 +78,10 @@ public class Move
     // toDisplayString (this is an encapsulation of all the info we need to display from a
     // move when we are in the gameUI, to let the opponent see what you put down)
     @Override
-    public String toString(){
+    public String toString() {
         // will look kinda like this "Player 1 plays Titanic via ACTOR (Leonardo DiCaprio)"
-        return player.getName() + " plays " + moviePlayed.getTitle() + " via " + connectionType + " (" + connectionValue + ")";
+        return player.getName() + " plays " + moviePlayed.getTitle() + " via "
+                + connectionType + " (" + connectionValue + ")";
     }
 
 

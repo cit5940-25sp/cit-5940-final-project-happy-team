@@ -1,7 +1,7 @@
-public class EscapeCommand implements Command{
+public class EscapeCommand implements Command {
     private MovieDatabase database;
 
-    public EscapeCommand (MovieDatabase database) {
+    public EscapeCommand(MovieDatabase database) {
         this.database = database;
 
     }
@@ -13,8 +13,8 @@ public class EscapeCommand implements Command{
         state.setCurrentMovie(newRandomMovie);
 
         // add this here if it doesn't clash with GameUI
-        System.out.println("Escape power-up used! The new movie is " + newRandomMovie.getTitle() + "!");
-
+        System.out.println("Escape power-up used! " +
+                "The new movie is " + newRandomMovie.getTitle() + "!");
     }
     @Override
     public String getName() {

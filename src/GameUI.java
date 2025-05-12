@@ -11,7 +11,6 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameUI {
@@ -68,7 +67,8 @@ public class GameUI {
         screen.startScreen();
 
         // create GUI
-        gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.BLUE));
+        gui = new MultiWindowTextGUI(screen, new DefaultWindowManager(),
+                new EmptySpace(TextColor.ANSI.BLUE));
 
         buildUI();
         setUpListeners();
@@ -131,8 +131,10 @@ public class GameUI {
         panel.addComponent(suggestions);
 
 
-        player1PowerupsLabel = new Label("Player 1 Powerups:").setForegroundColor(TextColor.ANSI.YELLOW);
-        player2PowerupsLabel = new Label("Player 2 Powerups:").setForegroundColor(TextColor.ANSI.YELLOW);
+        player1PowerupsLabel = new Label("Player 1 Powerups:")
+                .setForegroundColor(TextColor.ANSI.YELLOW);
+        player2PowerupsLabel = new Label("Player 2 Powerups:")
+                .setForegroundColor(TextColor.ANSI.YELLOW);
 
         panel.addComponent(player1PowerupsLabel);
         panel.addComponent(player2PowerupsLabel);
@@ -218,7 +220,8 @@ public class GameUI {
             if (!allSuggestions.isEmpty()) {
                 String first = allSuggestions.get(0);
                 suggestions.addItem(first, () -> useSuggestion(first));
-                allSuggestions.stream().skip(1).forEach(s -> suggestions.addItem(s, () -> useSuggestion(s)));
+                allSuggestions.stream().skip(1).forEach(s -> suggestions.addItem(s,
+                        () -> useSuggestion(s)));
             }
         });
     }
@@ -240,46 +243,51 @@ public class GameUI {
 //
 //    // displays their win condition for the players to see, including
 //    // their current progress towards it
-public void displayAllWinConditions(List<Player> players) {
-    gui.getGUIThread().invokeLater(() -> {
-        // Create a panel that spans both columns to hold all win conditions
-        Panel allWinConditionsPanel = new Panel();
-        allWinConditionsPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+    public void displayAllWinConditions(List<Player> players) {
+        gui.getGUIThread().invokeLater(() -> {
+            // Create a panel that spans both columns to hold all win conditions
+            Panel allWinConditionsPanel = new Panel();
+            allWinConditionsPanel.setLayoutManager(
+                    new LinearLayout(Direction.VERTICAL));
 
-        for (Player player : players) {
-            WinCondition wc = player.getWinCondition();
-            String title = player.getName() + "'s Win Condition: " + wc.getType() + " – " + wc.getValue();
-            String progress = "Progress: " + wc.getProgress() + "/" + wc.getTarget();
+            for (Player player : players) {
+                WinCondition wc = player.getWinCondition();
+                String title = player.getName() + "'s Win Condition: " +
+                        wc.getType() + " – " + wc.getValue();
+                String progress = "Progress: " + wc.getProgress() + "/" +
+                        wc.getTarget();
 
-            Label titleLabel = new Label(title).setForegroundColor(TextColor.ANSI.GREEN);
-            Label progressLabel = new Label(progress).setForegroundColor(TextColor.ANSI.BLACK);
+                Label titleLabel = new Label(title).setForegroundColor(
+                        TextColor.ANSI.GREEN);
+                Label progressLabel = new Label(progress).setForegroundColor(
+                        TextColor.ANSI.BLACK);
 
-            Panel singleWinPanel = new Panel();
-            singleWinPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
-            singleWinPanel.addComponent(titleLabel);
-            singleWinPanel.addComponent(progressLabel);
+                Panel singleWinPanel = new Panel();
+                singleWinPanel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+                singleWinPanel.addComponent(titleLabel);
+                singleWinPanel.addComponent(progressLabel);
 
-            allWinConditionsPanel.addComponent(singleWinPanel);
-        }
+                allWinConditionsPanel.addComponent(singleWinPanel);
+            }
 
-        // Add to main window
-        Panel mainPanel = (Panel) mainWindow.getComponent();
-        mainPanel.addComponent(allWinConditionsPanel.setLayoutData(
-                GridLayout.createLayoutData(
-                        GridLayout.Alignment.FILL,
-                        GridLayout.Alignment.BEGINNING,
-                        true, false,
-                        2, 1
-                )
-        ));
+            // Add to main window
+            Panel mainPanel = (Panel) mainWindow.getComponent();
+            mainPanel.addComponent(allWinConditionsPanel.setLayoutData(
+                    GridLayout.createLayoutData(
+                            GridLayout.Alignment.FILL,
+                            GridLayout.Alignment.BEGINNING,
+                            true, false,
+                            2, 1
+                    )
+            ));
 
-        try {
-            screen.refresh();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    });
-}
+            try {
+                screen.refresh();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
     public void showGameState(GameState state) {
         Player currentPlayer = state.getCurrentPlayer();
@@ -302,7 +310,8 @@ public void displayAllWinConditions(List<Player> players) {
             int start = Math.max(0, recentMovies.size() - 5);
             for (int i = start; i < recentMovies.size(); i++) {
                 Movie movie = recentMovies.get(i);
-                history.append(movie.getTitle()).append(" (").append(movie.getReleaseYear()).append(")\n");
+                history.append(movie.getTitle()).append(" (")
+                        .append(movie.getReleaseYear()).append(")\n");
             }
 
             // show last connection made
@@ -311,7 +320,8 @@ public void displayAllWinConditions(List<Player> players) {
                 Move lastMove = moveHistory.get(moveHistory.size() - 1);
                 String connectionType = lastMove.getConnectionType().toString().toLowerCase();
                 String connectionValue = lastMove.getConnectionValue();
-                history.append("Last connection: ").append(connectionType).append(" – ").append(connectionValue).append("\n");
+                history.append("Last connection: ").append(connectionType)
+                        .append(" – ").append(connectionValue).append("\n");
             }
 
             historyLabel.setText(history.toString());
@@ -326,7 +336,8 @@ public void displayAllWinConditions(List<Player> players) {
             } else {
                 StringBuilder p1Powerups = new StringBuilder("Player 1 Powerups: ");
                 for (Command cmd : p1Commands) {
-                    p1Powerups.append("!").append(cmd.getClass().getSimpleName().replace("Command", "").toLowerCase()).append(" ");
+                    p1Powerups.append("!").append(cmd.getClass()
+                            .getSimpleName().replace("Command", "").toLowerCase()).append(" ");
                 }
                 player1PowerupsLabel.setText(p1Powerups.toString());
                 player1PowerupsLabel.setForegroundColor(TextColor.ANSI.YELLOW);
@@ -340,7 +351,8 @@ public void displayAllWinConditions(List<Player> players) {
             } else {
                 StringBuilder p2Powerups = new StringBuilder("Player 2 Powerups: ");
                 for (Command cmd : p2Commands) {
-                    p2Powerups.append("!").append(cmd.getClass().getSimpleName().replace("Command", "").toLowerCase()).append(" ");
+                    p2Powerups.append("!").append(cmd.getClass().getSimpleName()
+                            .replace("Command", "").toLowerCase()).append(" ");
                 }
                 player2PowerupsLabel.setText(p2Powerups.toString());
                 player2PowerupsLabel.setForegroundColor(TextColor.ANSI.YELLOW);
@@ -477,60 +489,59 @@ public void displayAllWinConditions(List<Player> players) {
         });
     }
 
-//     this is so if the user types in something that doesn't connect
-//     they get an error prompt
-public void showError(String message) throws IOException {
-    // IMPORTANT: Don't stop or reset the timer when showing an error
-    gui.getGUIThread().invokeLater(() -> {
-        // Show error
-        Label error = new Label(message).setForegroundColor(TextColor.ANSI.RED);
+    //     this is so if the user types in something that doesn't connect
+    //     they get an error prompt
+    public void showError(String message) throws IOException {
+        // IMPORTANT: Don't stop or reset the timer when showing an error
+        gui.getGUIThread().invokeLater(() -> {
+            // Show error
+            Label error = new Label(message).setForegroundColor(TextColor.ANSI.RED);
 
-        // Create popup
-        Panel errorPanel = new Panel();
-        errorPanel.setLayoutManager(new GridLayout(1));
-        errorPanel.addComponent(error);
+            // Create popup
+            Panel errorPanel = new Panel();
+            errorPanel.setLayoutManager(new GridLayout(1));
+            errorPanel.addComponent(error);
 
-        // Create the window first so we can reference it in the button action
-        BasicWindow errorWindow = new BasicWindow("Error");
+            // Create the window first so we can reference it in the button action
+            BasicWindow errorWindow = new BasicWindow("Error");
 
-        // Create OK button with action to close the window
-        Button okButton = new Button("OK", () -> {
-            gui.removeWindow(errorWindow);
+            // Create OK button with action to close the window
+            Button okButton = new Button("OK", () -> {
+                gui.removeWindow(errorWindow);
+                try {
+                    // Refresh the screen but DON'T call showGameState or reset timer
+                    screen.refresh();
+                    // Ensure input focus returns to the main input box
+                    inputBox.takeFocus();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            errorPanel.addComponent(okButton);
+
+            // Set window properties
+            errorWindow.setComponent(errorPanel);
+            errorWindow.setHints(Collections.singletonList(Window.Hint.CENTERED));
+
+            // Add window to GUI
+            gui.addWindow(errorWindow);
+
+            // Give focus to OK button
+            okButton.takeFocus();
+
+            // Ensure screen updates
             try {
-                // Refresh the screen but DON'T call showGameState or reset timer
                 screen.refresh();
-                // Ensure input focus returns to the main input box
-                inputBox.takeFocus();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
-        errorPanel.addComponent(okButton);
-
-        // Set window properties
-        errorWindow.setComponent(errorPanel);
-        errorWindow.setHints(Collections.singletonList(Window.Hint.CENTERED));
-
-        // Add window to GUI
-        gui.addWindow(errorWindow);
-
-        // Give focus to OK button
-        okButton.takeFocus();
-
-        // Ensure screen updates
-        try {
-            screen.refresh();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    });
-}
-
+    }
 
     // VERY IMPORTANT:
     // WE READ THE PLAYER INPUTS IN THIS METHOD :) and have it show LIVE (REAL TIME) on screen
     // (This is the only method in our code where we read player input)
-//    private String captureInput(int startCol, int row) throws IOException{
+//    private String captureInput(int startCol, int row) throws IOException {
 //        // return the string in which the player typed in, so that we can
 //        // parse it and use it to create a Movie object and Move object
 //
@@ -540,7 +551,7 @@ public void showError(String message) throws IOException {
 
 
     // destructor! this cleans up the ui when the game is done
-    public void closeUI() throws IOException{
+    public void closeUI() throws IOException {
         stopTimer();
         gameTimer.cancel();
         // set timerRunning to false

@@ -12,7 +12,7 @@ public class WinCondition {
     private int progress = 0;
 
     //constructs a win condition of the given type, target, and value
-    public WinCondition (Move.ConnectionType type, String value, int target) {
+    public WinCondition(Move.ConnectionType type, String value, int target) {
         this.type = type;
         this.value = value;
         this.target = target;
@@ -45,7 +45,8 @@ public class WinCondition {
     //random generaes a win condition based on movie database
     //allow specifying whehter to use only default (gener based) win conditions
     //or to include all possible win condition types
-    public static WinCondition random(MovieDatabase database, int targetCount, boolean defaultOnly) {
+    public static WinCondition random(MovieDatabase database, int targetCount,
+                                      boolean defaultOnly) {
         Random rand = new Random();
         //decide which type of win condition to generate
         Move.ConnectionType selectedType;
@@ -64,12 +65,10 @@ public class WinCondition {
 
         if (selectedType == Move.ConnectionType.GENRE) {
             //for genre-based win condition
-            String[] commonGenres = {
-                    "Action", "Adventure","Animation","Comedy", "Crime",
-                    "Documentary", "Drama", "Family", "Fantasy", "History",
-                    "Horror", "Music", "Mystery", "Romance", "Science Fiction",
-                    "Thriller", "War", "Western"
-            };
+            String[] commonGenres = {"Action", "Adventure","Animation",
+                "Comedy", "Crime", "Documentary", "Drama", "Family", "Fantasy",
+                "History", "Horror", "Music", "Mystery", "Romance", "Science Fiction",
+                "Thriller", "War", "Western"};
             //try to find a genre with enough movies
             for (int attempt = 0; attempt < 10; attempt ++) {
                 String candidateGenre = commonGenres[rand.nextInt(commonGenres.length)];

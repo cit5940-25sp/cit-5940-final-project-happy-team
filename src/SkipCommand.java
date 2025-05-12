@@ -1,4 +1,4 @@
-public class SkipCommand implements Command{
+public class SkipCommand implements Command {
    // private Player target;
     public SkipCommand() {
 
@@ -13,7 +13,8 @@ public class SkipCommand implements Command{
         // this is implemented in gameState
         // skips current player's turn
         state.skipPlayer();
-        System.out.println("Skip power-up used! " + state.getCurrentPlayer().getName() + " skips their turn.");
+        System.out.println("Skip power-up used! " + state.getCurrentPlayer().getName() +
+                " skips their turn.");
 
 
     }

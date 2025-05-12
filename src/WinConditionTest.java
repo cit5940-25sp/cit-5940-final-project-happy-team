@@ -167,7 +167,8 @@ public class WinConditionTest {
     }
     @Test
     public void testGetDescription() {
-        WinCondition condition = new WinCondition(Move.ConnectionType.DIRECTOR, "Christopher Nolan", 4);
+        WinCondition condition = new WinCondition(Move.ConnectionType.DIRECTOR,
+                "Christopher Nolan", 4);
         String des = condition.getDescription();
 
         assertTrue("Description should include target count", des.contains("4"));

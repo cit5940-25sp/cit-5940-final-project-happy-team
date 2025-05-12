@@ -10,7 +10,8 @@ public class MovieNameGame {
 
 
         // Set Lanterna to use Swing terminal
-        System.setProperty("com.googlecode.lanterna.terminal.DefaultTerminalFactory.DefaultTerminalType", "swing");
+        System.setProperty("com.googlecode.lanterna.terminal" +
+                ".DefaultTerminalFactory.DefaultTerminalType", "swing");
         System.setProperty("java.awt.headless", "false");
 
         try {

@@ -17,9 +17,10 @@ public class GameControllerTest {
 
 
 
-    // to make this easier we want to make it so the player can meet their win condition after one move.
-    // we manually set the win condition to be something achievable, and have their first move be valid to making
-    // progress
+    // to make this easier we want to make it so the player can meet their win
+    // condition after one move.
+    // we manually set the win condition to be something achievable, and have
+    // their first move be valid to making progress
 
     @BeforeEach
     public void setup() throws IOException {
@@ -84,7 +85,8 @@ public class GameControllerTest {
     public void testGameControllerAppliesValidMove() throws IOException {
         controller.start();
         // should process one move and end game since win condition is met
-        assertTrue(player.getWinCondition().isMet(), "Player should meet win condition after valid move");
+        assertTrue(player.getWinCondition().isMet(),
+                "Player should meet win condition after valid move");
     }
 
 

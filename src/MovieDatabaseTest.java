@@ -51,7 +51,8 @@ public class MovieDatabaseTest {
         for (int i = 0; i < 10; i++) {
             Movie randomMovie = db.getRandomMovie();
             if (randomMovie != null) {
-                assertFalse("Random movie should not be repeated", movieIds.contains(randomMovie.getId()));
+                assertFalse("Random movie should not be repeated",
+                        movieIds.contains(randomMovie.getId()));
                 movieIds.add(randomMovie.getId());
             }
         }
@@ -60,8 +61,10 @@ public class MovieDatabaseTest {
     public void testSearchByTitlePrefix() {
         //test searching for Avatar
         List<String> avatarResults = db.searchByTitlePrefix("Ava");
-        assertTrue("Search results should contain Avatar", avatarResults.contains("Avatar"));
-        assertTrue("Search results should not exceed 5 items", avatarResults.size() <= 5);
+        assertTrue("Search results should contain Avatar",
+                avatarResults.contains("Avatar"));
+        assertTrue("Search results should not exceed 5 items",
+                avatarResults.size() <= 5);
 
         //test searching for pirates
         List<String> piratesResults = db.searchByTitlePrefix("Pirate");
@@ -76,10 +79,12 @@ public class MovieDatabaseTest {
                 found);
         //test searching for empty prefix
         List<String> emptyResults = db.searchByTitlePrefix("");
-        assertTrue("Empty prefix should return empty list",emptyResults.isEmpty());
+        assertTrue("Empty prefix should return empty list",
+                emptyResults.isEmpty());
         //test with null prefix
         List<String> nullResults = db.searchByTitlePrefix(null);
-        assertTrue("Null prefix should return empty list", nullResults.isEmpty());
+        assertTrue("Null prefix should return empty list",
+                nullResults.isEmpty());
 
         //test case insensityvity
         List<String> lower = db.searchByTitlePrefix("ava");
@@ -136,7 +141,8 @@ public class MovieDatabaseTest {
     @Test
     public void testGetMovieByComposer() {
         Set<Movie> composerMovies = db.getMovieByComposer("James Horner");
-        assertNotNull("Composer index should exist for James Horner",composerMovies);
+        assertNotNull("Composer index should exist for James Horner",
+                composerMovies);
         boolean found = false;
         for (Movie m : composerMovies) {
             if ("Avatar".equals(m.getTitle())) {
@@ -156,10 +162,14 @@ public class MovieDatabaseTest {
         List<String> genres = avatar.getGenres();
 
         //check if genres list contains expected genres
-        assertTrue("Avatar should have Action genre",genres.contains("Action"));
-        assertTrue("Avatar should have Adventure genre",genres.contains("Adventure"));
-        assertTrue("Avatar should have Fantasy genre",genres.contains("Fantasy"));
-        assertTrue("Avatar should have Science Fiction genre", genres.contains("Science Fiction"));
+        assertTrue("Avatar should have Action genre",
+                genres.contains("Action"));
+        assertTrue("Avatar should have Adventure genre",
+                genres.contains("Adventure"));
+        assertTrue("Avatar should have Fantasy genre",
+                genres.contains("Fantasy"));
+        assertTrue("Avatar should have Science Fiction genre",
+                genres.contains("Science Fiction"));
     }
 
     @Test
@@ -168,16 +178,22 @@ public class MovieDatabaseTest {
         Movie avatar = db.getMovieById(19995);
         List<String> actors = avatar.getActors();
         //check if main actors are in the list
-        assertTrue("Avatar should have Sam Worthington", actors.contains("Sam Worthington"));
-        assertTrue("Avatar should have Zoe Saldana", actors.contains("Zoe Saldana"));
-        assertTrue("Avatar should have Sigourney Weaver", actors.contains("Sigourney Weaver"));
+        assertTrue("Avatar should have Sam Worthington",
+                actors.contains("Sam Worthington"));
+        assertTrue("Avatar should have Zoe Saldana",
+                actors.contains("Zoe Saldana"));
+        assertTrue("Avatar should have Sigourney Weaver",
+                actors.contains("Sigourney Weaver"));
 
         //test if director is properly loaded
-        assertEquals("James Cameron should be director","James Cameron", avatar.getDirector());
+        assertEquals("James Cameron should be director",
+                "James Cameron", avatar.getDirector());
         //test if writers include James Cameron
         List<String> writers = avatar.getWriters();
-        assertTrue("James Cameron should be a writer", writers.contains("James Cameron"));
-        assertEquals("James Horner should be composer","James Horner", avatar.getComposer());
+        assertTrue("James Cameron should be a writer",
+                writers.contains("James Cameron"));
+        assertEquals("James Horner should be composer",
+                "James Horner", avatar.getComposer());
 
     }
 
@@ -188,24 +204,30 @@ public class MovieDatabaseTest {
         //test individual loading methods
         testDb.loadMovies("tmdb_5000_movies.csv");
         //check if movies are loaded
-        assertNotNull("Avatar should be loaded",testDb.getMovieById(19995));
-        assertEquals("Avatar title should be correct","Avatar",testDb.getMovieById(19995).getTitle());
+        assertNotNull("Avatar should be loaded",
+                testDb.getMovieById(19995));
+        assertEquals("Avatar title should be correct",
+                "Avatar",testDb.getMovieById(19995).getTitle());
 
         //load credits
         testDb.loadCredits("tmdb_5000_credits.csv");
         //check if credits are loaded
         Movie avatar = testDb.getMovieById(19995);
-        assertFalse("Avatar should have actors", avatar.getActors().isEmpty());
+        assertFalse("Avatar should have actors",
+                avatar.getActors().isEmpty());
         //build indexes
         testDb.buildIndexes();
         //check if indexes are built
-        assertNotNull("Actor index should exist for Sam Worthington",testDb.getMovieByActor("Sam Worthington"));
-        assertNotNull("Director index should exist for James Cameron",testDb.getMovieByDirector("James Cameron"));
+        assertNotNull("Actor index should exist for Sam Worthington",
+                testDb.getMovieByActor("Sam Worthington"));
+        assertNotNull("Director index should exist for James Cameron",
+                testDb.getMovieByDirector("James Cameron"));
     }
     @Test
     public void testGetMovieByWriter() {
         Set<Movie> writerMovies = db.getMovieByWriter("James Cameron");
-        assertNotNull("Writer index should exist for James Cameron", writerMovies);
+        assertNotNull("Writer index should exist for James Cameron",
+                writerMovies);
         boolean found = false;
         for (Movie m : writerMovies) {
             if ("Avatar".equals(m.getTitle())) {
@@ -215,13 +237,15 @@ public class MovieDatabaseTest {
         }
         assertTrue("James Cameron should have written Avatar", found);
         Set<Movie> nonExist = db.getMovieByWriter("NonExistentWriter14678");
-        assertNull("Should return null for non-existent writer",nonExist);
+        assertNull("Should return null for non-existent writer",
+                nonExist);
     }
 
     @Test
     public void testGetMovieBycines() {
         Set<Movie> cines = db.getMovieByCines("Mauro Fiore");
-        assertNotNull("Cinematographer index should exist for Mauro Fiore", cines);
+        assertNotNull("Cinematographer index should exist for " +
+                "Mauro Fiore", cines);
         boolean found = false;
         for (Movie m : cines) {
             if ("Avatar".equals(m.getTitle())) {
@@ -229,7 +253,7 @@ public class MovieDatabaseTest {
                 break;
             }
         }
-        assertTrue("Mauro FIore should have been cinematographer for Avatar", found);
+        assertTrue("Mauro Fiore should have been cinematographer for Avatar", found);
         Set<Movie> nonExist = db.getMovieByCines("NonExistentCinematographer 13567");
         assertNull("Should return null for non-existent cinematographer", nonExist);
     }
@@ -237,66 +261,62 @@ public class MovieDatabaseTest {
     //compelte test
     @Test
     public void testFull() throws IOException {
-    MovieDatabase igDb = new MovieDatabase();
-    igDb.loadAll("tmdb_5000_movies.csv","tmdb_5000_credits.csv");
-    igDb.buildIndexes();
+        MovieDatabase igDb = new MovieDatabase();
+        igDb.loadAll("tmdb_5000_movies.csv","tmdb_5000_credits.csv");
+        igDb.buildIndexes();
 
-    //assert get by id
-    Movie avatar = igDb.getMovieById(19995);
-    assertNotNull("Avatar should be loaded by ID", avatar);
-    assertEquals("Avatar", avatar.getTitle());
-    assertEquals(2009, avatar.getReleaseYear());
+        //assert get by id
+        Movie avatar = igDb.getMovieById(19995);
+        assertNotNull("Avatar should be loaded by ID", avatar);
+        assertEquals("Avatar", avatar.getTitle());
+        assertEquals(2009, avatar.getReleaseYear());
 
-    //assert prefix search
-    List<String> prefix = igDb.searchByTitlePrefix("Pirate");
-    assertFalse("Prefix search for 'Pirate' should not be empty",prefix.isEmpty());
-    boolean found = false;
-    for (String title : prefix) {
-        if (title.startsWith("Pirates of the Caribbean")) {
-            found = true;
-            break;
+        //assert prefix search
+        List<String> prefix = igDb.searchByTitlePrefix("Pirate");
+        assertFalse("Prefix search for 'Pirate' should not be empty",prefix.isEmpty());
+        boolean found = false;
+        for (String title : prefix) {
+            if (title.startsWith("Pirates of the Caribbean")) {
+                found = true;
+                break;
+            }
         }
-    }
-    assertTrue("Search results should include 'Pirates of the Caribbean'", found);
-    //assert actor index
-    Set<Movie> sam = igDb.getMovieByActor("Sam Worthington");
-    assertNotNull("Sam Worthington should be indexed", sam);
-    boolean found1 = false;
-    for (Movie m : sam) {
-        if ("Avatar".equals(m.getTitle())) {
-            found1 = true;
-            break;
+        assertTrue("Search results should include 'Pirates of the Caribbean'", found);
+        //assert actor index
+        Set<Movie> sam = igDb.getMovieByActor("Sam Worthington");
+        assertNotNull("Sam Worthington should be indexed", sam);
+        boolean found1 = false;
+        for (Movie m : sam) {
+            if ("Avatar".equals(m.getTitle())) {
+                found1 = true;
+                break;
+            }
         }
-    }
-    assertTrue("Sam Worthington should appear in Avatar", found1);
+        assertTrue("Sam Worthington should appear in Avatar", found1);
 
-    //assert director index
-    Set<Movie> cam = igDb.getMovieByDirector("James Cameron");
-    assertNotNull("James Cameron should be indexed", cam);
-    boolean found2 = false;
-    for (Movie m : cam) {
-        if ("Avatar".equals(m.getTitle())) {
-            found2 = true;
-            break;
+        //assert director index
+        Set<Movie> cam = igDb.getMovieByDirector("James Cameron");
+        assertNotNull("James Cameron should be indexed", cam);
+        boolean found2 = false;
+        for (Movie m : cam) {
+            if ("Avatar".equals(m.getTitle())) {
+                found2 = true;
+                break;
+            }
         }
-    }
-    assertTrue("James Cameron should have directed Avatar", found2);
+        assertTrue("James Cameron should have directed Avatar", found2);
 
-    //assert composer index
-    Set<Movie> hornerMovies = igDb.getMovieByComposer("James Horner") ;
-    assertNotNull("James Horner should be indexed", hornerMovies);
-    boolean found3 = false;
-    for (Movie m : hornerMovies) {
-        if ("Avatar".equals(m.getTitle())) {
-            found3 = true;
-            break;
+        //assert composer index
+        Set<Movie> hornerMovies = igDb.getMovieByComposer("James Horner") ;
+        assertNotNull("James Horner should be indexed", hornerMovies);
+        boolean found3 = false;
+        for (Movie m : hornerMovies) {
+            if ("Avatar".equals(m.getTitle())) {
+                found3 = true;
+                break;
+            }
         }
+        assertTrue("James Horner should have composed Avatar", found3);
     }
-    assertTrue("James Horner should have composed Avatar", found3);
-
-
-
-
-}
 
 }

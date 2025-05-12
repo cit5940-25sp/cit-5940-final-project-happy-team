@@ -25,8 +25,10 @@ public class CommandTest {
         ArrayList<String> cines = new ArrayList<>(Collections.singletonList("Cine A"));
         ArrayList<String> genres = new ArrayList<>(Collections.singletonList("Genre A"));
 
-        movie1 = new Movie(1, "Movie One", 2000, "Dir A", "Comp A", sharedActors, writers1, cines, genres);
-        movie2 = new Movie(2, "Movie Two", 2001, "Dir B", "Comp B", sharedActors, writers2, cines, genres);
+        movie1 = new Movie(1, "Movie One", 2000, "Dir A",
+                "Comp A", sharedActors, writers1, cines, genres);
+        movie2 = new Movie(2, "Movie Two", 2001, "Dir B",
+                "Comp B", sharedActors, writers2, cines, genres);
 
         // fake temp MovieDatabase that returns movie1 on first call and movie2 on second
         movieCallCount = 0;
@@ -72,23 +74,27 @@ public class CommandTest {
     }
 
 
-    // test escape command and see if it gives a new Movie as the current Movie
+    // test escape command and see if it gives a new Movie
+    // as the current Movie
     @Test
     public void testingEscapeCommandChangesMovie() {
-        Movie before = state.getPlayedMoviesHistory().get(state.getPlayedMoviesHistory().size() - 1);
+        Movie before = state.getPlayedMoviesHistory()
+                .get(state.getPlayedMoviesHistory().size() - 1);
 
         EscapeCommand escape = new EscapeCommand(db);
         escape.execute(state);
 
-        Movie after = state.getPlayedMoviesHistory().get(state.getPlayedMoviesHistory().size() - 1);
+        Movie after = state.getPlayedMoviesHistory()
+                .get(state.getPlayedMoviesHistory().size() - 1);
 
-        assertNotEquals(before.getId(), after.getId(), "EscapeCommand should change the current movie");
+        assertNotEquals(before.getId(), after.getId(),
+                "EscapeCommand should change the current movie");
     }
 
 
 
-    // test block command and see if the player can repeat a turn (because they've blocked the opponent's
-    // next turn
+    // test block command and see if the player can repeat a turn (because
+    // they've blocked the opponent's next turn
     @Test
     public void testingBlockCommandSkipsBlockedPlayer() {
         state.skipPlayer();

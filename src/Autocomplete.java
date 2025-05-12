@@ -36,11 +36,11 @@ public class Autocomplete {
 
     // constructor for an autocomplete object
     // root node is a TrieNode
-    public Autocomplete(List<String> movieTitles){
+    public Autocomplete(List<String> movieTitles) {
         root = new TrieNode();
         // for all titles in all the movietitles
         // insert it
-        for(String title : movieTitles){
+        for (String title : movieTitles) {
             insert(title);
         }
     }
@@ -50,14 +50,14 @@ public class Autocomplete {
 
 
     // add this word into the Trie
-    private void insert(String word){
+    private void insert(String word) {
         // start insertion at the root
         TrieNode node = root;
         // for all the characters in this word
-        for (char c : word.toLowerCase().toCharArray()){
+        for (char c : word.toLowerCase().toCharArray()) {
             // if the node's children do not contain c
             // create one child Node and put it there
-            if (!node.children.containsKey(c)){
+            if (!node.children.containsKey(c)) {
                 node.children.put(c, new TrieNode());
             }
             // update node (the one we are on) to the node
@@ -85,7 +85,7 @@ public class Autocomplete {
     }
 
 
-    public void dfs (TrieNode node, List<String> results, int max){
+    public void dfs(TrieNode node, List<String> results, int max) {
         if (results.size() == max) {
             return;
         }
@@ -94,7 +94,8 @@ public class Autocomplete {
         }
 
         // Sort
-        node.children.keySet().stream().sorted().forEach(c -> dfs(node.children.get(c), results, max));
+        node.children.keySet().stream().sorted()
+                .forEach(c -> dfs(node.children.get(c), results, max));
     }
 
     // get node representing end of prefix

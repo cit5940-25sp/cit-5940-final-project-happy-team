@@ -1,6 +1,5 @@
 import org.junit.Test;
 import org.junit.Before;
-import java.io.IOException;
 import java.util.*;
 import static org.junit.Assert.*;
 
@@ -24,7 +23,7 @@ public class MovieTest {
     }
 
     @Test
-    public void testMovieBasicInfo () {
+    public void testMovieBasicInfo() {
         //test basic movie info
         assertEquals("Avatar ID should be 19995", 19995, avatar.getId());
         assertEquals("Avatar title should be correct","Avatar", avatar.getTitle());
@@ -51,22 +50,20 @@ public class MovieTest {
 
     @Test
     public void testFindCommonCOnnections() {
-    //test finding common connection between 2 movies
-    List<String> avatarActors = avatar.getConnections(Move.ConnectionType.ACTOR);
-    List<String> piratesActors = pirates.getConnections(Move.ConnectionType.ACTOR);
+        //test finding common connection between 2 movies
+        List<String> avatarActors = avatar.getConnections(Move.ConnectionType.ACTOR);
+        List<String> piratesActors = pirates.getConnections(Move.ConnectionType.ACTOR);
 
-    //find common actors if exist
-    Set<String> commonActors = new HashSet<>(avatarActors);
-    commonActors.retainAll(piratesActors);
-    //find common genres
-    List<String> avatarGenres = avatar.getConnections(Move.ConnectionType.GENRE);
-    List<String> piratesGenres = pirates.getConnections(Move.ConnectionType.GENRE);
-    Set<String> com = new HashSet<>(avatarActors);
-    commonActors.retainAll(piratesGenres);
-    assertTrue("Avatar and Pirates should share at least one genre",
-            !com.isEmpty());
-
-
+        //find common actors if exist
+        Set<String> commonActors = new HashSet<>(avatarActors);
+        commonActors.retainAll(piratesActors);
+        //find common genres
+        List<String> avatarGenres = avatar.getConnections(Move.ConnectionType.GENRE);
+        List<String> piratesGenres = pirates.getConnections(Move.ConnectionType.GENRE);
+        Set<String> com = new HashSet<>(avatarActors);
+        commonActors.retainAll(piratesGenres);
+        assertTrue("Avatar and Pirates should share at least one genre",
+                !com.isEmpty());
     }
 
 }

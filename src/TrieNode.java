@@ -1,4 +1,3 @@
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -11,8 +10,4 @@ public class TrieNode {
     // For "titanic", the node that has 'c' will have fullWord = Titanic, for easy
     // access
     String fullWord = null;
-
-
-
-
 }

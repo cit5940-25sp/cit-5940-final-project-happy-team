@@ -47,8 +47,10 @@ public class MoveTest {
 
         assertEquals("Move should store the player", p1, move.getPlayer());
         assertEquals("Move should store the movie", testMovie1, move.getMoviePlayed());
-        assertEquals("Move should store the connection type", Move.ConnectionType.ACTOR, move.getConnectionType());
-        assertEquals("Move should tore the connection value", "Tom Hanks", move.getConnectionValue());
+        assertEquals("Move should store the connection type",
+                Move.ConnectionType.ACTOR, move.getConnectionType());
+        assertEquals("Move should tore the connection value",
+                "Tom Hanks", move.getConnectionValue());
         //check timestamp is semt
         long currenT = System.currentTimeMillis();
         long moveT = move.getTimestamp();
