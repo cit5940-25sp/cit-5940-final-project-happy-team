@@ -91,7 +91,8 @@ public class GameController {
                 // If present, continue, it means it's a valid move and the game
                 // should continue like usual call this state.applyMove(move);
                 state.applyMove(newMove);
-                mustCallNextTurn = true;
+                //mustCallNextTurn = true;
+                state.nextTurn();
                 ui.showGameState(state);
             }
 
