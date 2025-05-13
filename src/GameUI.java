@@ -22,6 +22,8 @@ public class GameUI {
     private Window mainWindow;
     private TextBox inputBox;
     private ActionListBox suggestions;
+    private int round;
+    private Label roundLabel;
     private Label timerLabel;
     private Label playerInfoLabel;
     private Label historyLabel;
@@ -87,6 +89,13 @@ public class GameUI {
         // create panel with layout
         Panel panel = new Panel();
         panel.setLayoutManager(new GridLayout(2));
+
+        // round label
+        roundLabel = new Label("Round " + round);
+        panel.addComponent(roundLabel);
+
+        // formatting purposes
+        panel.addComponent(new Label(""));
 
         // player info, timer, history labels
         playerInfoLabel = new Label("Waiting for player...");
@@ -270,6 +279,12 @@ public class GameUI {
     public void showGameState(GameState state) {
         Player currentPlayer = state.getCurrentPlayer();
         Player opponentPlayer = state.getOpponentPlayer(); // assuming this method exists
+
+        // increment round everytime it is player 1's turn
+        if (currentPlayer == state.getPlayers().get(0)) {
+            round++;
+            roundLabel.setText("Round " + round);
+        }
 
         gui.getGUIThread().invokeLater(() -> {
             // update player turn
