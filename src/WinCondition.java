@@ -89,7 +89,6 @@ public class WinCondition {
                     targetCount = Math.min(targetCount, moviesWithValue.size());
                 }
             }
-
         } else {
             //for non-genre win conditions (actor, director...)
             int maxAttempts = 20;
