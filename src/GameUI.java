@@ -25,8 +25,6 @@ public class GameUI {
     private Label timerLabel;
     private Label playerInfoLabel;
     private Label historyLabel;
-    private TextColor foreground = TextColor.ANSI.WHITE;
-    private TextColor background = TextColor.ANSI.BLACK;
 
     private Timer gameTimer;
     private Clock gameClock;
@@ -43,20 +41,11 @@ public class GameUI {
     private Label player2PowerupsLabel;
 
 
-
-//    private ScheduledExecutorService scheduler;
-//    // we give them 30 seconds before time is up
-//    private int secondsRemaining = 30;
-//    private boolean timerRunning = true;
-
     // constructor
     public GameUI(GameState gameState) throws IOException {
         this.gameState = gameState;
 
-        // initialize the terminal and screen
-        //terminal = new DefaultTerminalFactory().createTerminal();
-
-
+        // initialize terminal and screen
         terminal = new DefaultTerminalFactory()
                 .setTerminalEmulatorTitle("Movie Name Game")
                 .setForceTextTerminal(false)
@@ -72,9 +61,7 @@ public class GameUI {
 
         buildUI();
         setUpListeners();
-        //showMainWindow();
         setUpTimer();
-        //startTurnTimer();
     }
 
 
@@ -120,31 +107,32 @@ public class GameUI {
                 GridLayout.Alignment.FILL, GridLayout.Alignment.FILL, true,
                 true, 2, 1));
 
+        // formatting purposes
+        panel.addComponent(new Label(""));
 
+        // for players to type
         inputBox = new TextBox(new TerminalSize(30, 1));
         panel.addComponent(new Label("Enter movie title:"));
         panel.addComponent(inputBox);
 
-        // sugg box
+        // formatting purposes
+        panel.addComponent(new Label(""));
+
+        // box for autocomplete suggestions
         suggestions = new ActionListBox(new TerminalSize(30, 5));
-        //panel.addComponent(new Label("Suggestions:"));
         panel.addComponent(suggestions);
 
+        // powerups
         player1PowerupsLabel = new Label("Player 1 Powerups:")
                 .setForegroundColor(TextColor.ANSI.YELLOW);
         player2PowerupsLabel = new Label("Player 2 Powerups:")
                 .setForegroundColor(TextColor.ANSI.YELLOW);
-
         panel.addComponent(player1PowerupsLabel);
         panel.addComponent(player2PowerupsLabel);
-
 
         mainWindow.setComponent(panel);
         inputBox.takeFocus();
     }
-
-
-
 
 
     // update player input live
@@ -157,6 +145,7 @@ public class GameUI {
             }
         });
     }
+
     public void showMainWindow() {
         gui.addWindowAndWait(mainWindow);
     }
@@ -172,7 +161,7 @@ public class GameUI {
     // control timer
     public void startTurnTimer() {
         timerRunning = true;
-        secondsRemaining.set(30);
+        secondsRemaining.set(300);
         turnStartTime = Instant.now(gameClock);
 
         gameTimer.scheduleAtFixedRate(new TimerTask() {
@@ -182,7 +171,7 @@ public class GameUI {
                     return;
                 }
                 Duration timeElapsed = Duration.between(turnStartTime, Instant.now(gameClock));
-                int remaining = (int) (30 - timeElapsed.getSeconds());
+                int remaining = (int) (300 - timeElapsed.getSeconds());
                 secondsRemaining.set(Math.max(remaining, 0));
 
                 gui.getGUIThread().invokeLater(() -> {
@@ -230,18 +219,8 @@ public class GameUI {
         inputBox.takeFocus();
     }
 
-//    // print a certain string of text with the set columns and rows
-//    private void printString(int column, int row, String text){
-//
-//    }
-//
-//    // update the timer display with the time remaining
-//    private void updateTimerDisplay() throws IOException{
-//
-//    }
-//
-//    // displays their win condition for the players to see, including
-//    // their current progress towards it
+
+    // displays players' win condition and their current progress
     public void displayAllWinConditions(List<Player> players) {
         gui.getGUIThread().invokeLater(() -> {
             // Create a panel that spans both columns to hold all win conditions
@@ -290,22 +269,21 @@ public class GameUI {
 
     public void showGameState(GameState state) {
         Player currentPlayer = state.getCurrentPlayer();
-        Player opponentPlayer = state.getOpponentPlayer(); // Assuming this method exists
+        Player opponentPlayer = state.getOpponentPlayer(); // assuming this method exists
 
         gui.getGUIThread().invokeLater(() -> {
-            // Update player turn info
+            // update player turn
             playerInfoLabel.setText(currentPlayer.getName() + "'s turn");
 
-            // Update both players' win condition displays
+            // update both win conditions
             updateWinConditionDisplay(player1WinConditionLabel, state.getPlayers().get(0));
             updateWinConditionDisplay(player2WinConditionLabel, state.getPlayers().get(1));
 
-
-
-            // Update game history
+            // update game history
             StringBuilder history = new StringBuilder("Recent movies: \n");
             List<Movie> recentMovies = state.getPlayedMoviesHistory();
-            // display last 5 movies
+
+            // display the last 5 movies
             int start = Math.max(0, recentMovies.size() - 5);
             for (int i = start; i < recentMovies.size(); i++) {
                 Movie movie = recentMovies.get(i);
@@ -313,7 +291,7 @@ public class GameUI {
                         .append(movie.getReleaseYear()).append(")\n");
             }
 
-            // show last connection made
+            // show the last connection made
             List<Move> moveHistory = state.getMoveHistory();
             if (!moveHistory.isEmpty()) {
                 Move lastMove = moveHistory.get(moveHistory.size() - 1);
@@ -325,7 +303,7 @@ public class GameUI {
 
             historyLabel.setText(history.toString());
 
-
+            // powerups for each player
             List<Player> players = state.getPlayers();
 
             List<Command> p1Commands = state.getPowerUpsFor(players.get(0));
@@ -358,22 +336,16 @@ public class GameUI {
             }
 
 
-
-
-
-
-
-            // Always restart the timer on a new turn
+            // restart the timer as it is a new turn
             stopTimer();
             startTurnTimer();
-
 
             inputBox.takeFocus();
         });
     }
 
 
-    // Helper method to update a win condition label
+    // to update win condition
     private void updateWinConditionDisplay(Label label, Player player) {
         WinCondition wc = player.getWinCondition();
         String type = wc.getType().toString();
@@ -384,9 +356,6 @@ public class GameUI {
         label.setText(player.getName() + "'s Win Condition: " + type + " – " + value
                 + " | Progress: " + progress + "/" + required);
     }
-
-
-
 
 
     public String promptPlayer(Player currentPlayer) {
@@ -404,24 +373,24 @@ public class GameUI {
             e.printStackTrace();
         }
 
-        // Create a final container for the result
+        // create container for the result
         final String[] result = new String[1];
         final boolean[] done = new boolean[1];
 
-        // Set up a special listener for the Enter key
+        // special listener for 'enter'
         inputBox.setInputFilter((interactionInfo, keyStroke) -> {
             if (keyStroke.getKeyType() == KeyType.Enter) {
-                // Capture the current text when Enter is pressed
+                // capture the current text when 'enter' key is pressed
                 result[0] = inputBox.getText();
                 done[0] = true;
                 System.out.println("Enter pressed! Input text: " + result[0]);
-                return false; // Don't pass Enter to the text box
+                return false; // don't pass enter to the text box
             }
-            // For EOF signals, treat them as possible Enter keys
+            // treat EOF signals as possible Enter keys
             if (keyStroke.getKeyType() == KeyType.EOF) {
                 System.out.println("EOF detected, checking if it's Enter");
 
-                // If there's text in the input box, treat EOF as Enter
+                // treat EOF as 'enter' if there's text in the input box
                 if (inputBox.getText() != null && !inputBox.getText().isEmpty()) {
                     result[0] = inputBox.getText();
                     done[0] = true;
@@ -429,10 +398,10 @@ public class GameUI {
                     return false;
                 }
             }
-            return true; // Pass other keys to the text box
+            return true; // pass other keys to text box
         });
 
-        // Wait for the result
+        // wait for result
         while (!done[0]) {
             try {
                 Thread.sleep(50);
@@ -442,7 +411,7 @@ public class GameUI {
             }
         }
 
-        // Remove the special input filter when done
+        // remove special input filter when done
         inputBox.setInputFilter(null);
 
         return result[0];
@@ -463,13 +432,6 @@ public class GameUI {
                             GridLayout.Alignment.CENTER,
                             true, true)));
 
-            // game summary
-//            panel.addComponent(new Label("Final Score: " + winner.getScore())
-//                    .setLayoutData(GridLayout.createLayoutData(
-//                            GridLayout.Alignment.CENTER,
-//                            GridLayout.Alignment.CENTER,
-//                            true, true)));
-
             // play again button
             Button quitButton = new Button("Quit", () -> {
                 try {
@@ -480,7 +442,7 @@ public class GameUI {
             });
             panel.addComponent(quitButton);
 
-            // display the dialog
+            // display "Game Over"
             BasicWindow endWindow = new BasicWindow("Game Over");
             endWindow.setComponent(panel);
             endWindow.setHints(Collections.singletonList(Window.Hint.CENTERED));
@@ -488,29 +450,26 @@ public class GameUI {
         });
     }
 
-    //     this is so if the user types in something that doesn't connect
-    //     they get an error prompt
+    // error prompt when there is no connection
     public void showError(String message) throws IOException {
-        // IMPORTANT: Don't stop or reset the timer when showing an error
+        // IMPORTANT: timer should not stop or reset when showing an error
         gui.getGUIThread().invokeLater(() -> {
-            // Show error
+            // show error
             Label error = new Label(message).setForegroundColor(TextColor.ANSI.RED);
 
-            // Create popup
+            // popup to show error
             Panel errorPanel = new Panel();
             errorPanel.setLayoutManager(new GridLayout(1));
             errorPanel.addComponent(error);
 
-            // Create the window first so we can reference it in the button action
-            BasicWindow errorWindow = new BasicWindow("Error");
 
-            // Create OK button with action to close the window
-            Button okButton = new Button("OK", () -> {
+            BasicWindow errorWindow = new BasicWindow("Error");
+            Button okButton = new Button("OK", () -> { // to close error window
                 gui.removeWindow(errorWindow);
                 try {
-                    // Refresh the screen but DON'T call showGameState or reset timer
+                    // refresh screen but DON'T call showGameState or reset timer
                     screen.refresh();
-                    // Ensure input focus returns to the main input box
+                    // ensure input focus returns to the main input box
                     inputBox.takeFocus();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -518,17 +477,15 @@ public class GameUI {
             });
             errorPanel.addComponent(okButton);
 
-            // Set window properties
+            // set window properties
             errorWindow.setComponent(errorPanel);
             errorWindow.setHints(Collections.singletonList(Window.Hint.CENTERED));
 
-            // Add window to GUI
             gui.addWindow(errorWindow);
 
-            // Give focus to OK button
             okButton.takeFocus();
 
-            // Ensure screen updates
+            // update screen
             try {
                 screen.refresh();
             } catch (IOException e) {
@@ -537,19 +494,7 @@ public class GameUI {
         });
     }
 
-    // VERY IMPORTANT:
-    // WE READ THE PLAYER INPUTS IN THIS METHOD :) and have it show LIVE (REAL TIME) on screen
-    // (This is the only method in our code where we read player input)
-//    private String captureInput(int startCol, int row) throws IOException {
-//        // return the string in which the player typed in, so that we can
-//        // parse it and use it to create a Movie object and Move object
-//
-//        // also have the user's entries show up LIVE on the screen (see Lanterna)
-//        return null;
-//    }
-
-
-    // destructor! this cleans up the ui when the game is done
+    // clean up ui when the game is over
     public void closeUI() throws IOException {
         stopTimer();
         gameTimer.cancel();
@@ -560,16 +505,4 @@ public class GameUI {
         screen.stopScreen();
         terminal.close();
     }
-
-   /* public static void main(String[] args) {
-        try {
-            List<String> movies = Arrays.asList("Avengers", "Divergent", "Avatar", "Lion King");
-            Autocomplete ac = new Autocomplete(movies);
-            GameUI ui = new GameUI();
-            ui.ac = ac;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
-
 }
