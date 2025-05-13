@@ -29,8 +29,8 @@ public class GameController {
         while (!state.isGameOver()) {
             // UI -- show the game state + prompt the current player for input
             // ui.showGameState(state);
-            String input = ui.promptPlayer(state.getCurrentPlayer());
             Player currentPlayer = state.getCurrentPlayer();
+            String input = ui.promptPlayer(state.getCurrentPlayer());
 
             // parse input to determine if its a powerUP (skip, block, escape) or a Movie
             // convert the input string into a corresponding Command object
@@ -56,14 +56,15 @@ public class GameController {
             // if there is something in commandMaybe, then its a command
             if (commandMaybe.isPresent()) {
                 Command command = commandMaybe.get();
+                currentPlayer = state.getCurrentPlayer();
 
                 if (state.applyCommand(currentPlayer, command)) {
-                    if (!(command instanceof SkipCommand || command instanceof BlockCommand)) {
-                        // if it was a escape command, set mustCallNextTurn to true so we nextTurn()
-                        mustCallNextTurn = true;
-                    }
+                    // don't call nextTurn here
                     ui.showGameState(state);
                 }
+
+
+
             // if there is nothing in commandMaybe, then it's a MOVIE
             } else {
                 Movie guessedMovie = database.getMovieByTitle(input);
@@ -74,6 +75,7 @@ public class GameController {
                     continue;
                 }
 
+                currentPlayer = state.getCurrentPlayer();
                 // try building a Move with this Movie
                 Optional<Move> move = state.tryBuildMove(currentPlayer, guessedMovie);
                 Move newMove;
@@ -94,10 +96,7 @@ public class GameController {
             }
 
 
-            // advance to next turn using state.nextTurn(), IF the flag is true
-            if (mustCallNextTurn) {
-                state.nextTurn();
-            }
+
 
         }
 
@@ -107,7 +106,8 @@ public class GameController {
 
 
     // helper func to parse command from input string
-    // I will use print statements here just for visibility (it goes against checkstyle, but terminal is
+    // I will use print statements here just for visibility
+    // (it goes against checkstyle, but terminal is
     // separate from our game window anyway, so it won't be a nuisance
     private Optional<Command> getCommandFromInput(String input) {
         if (!input.startsWith("!")) {

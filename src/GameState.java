@@ -306,6 +306,7 @@ public class GameState {
                     available.remove(c);
                     c.execute(this);
                     System.out.println("Command " + c.getClass().getSimpleName() + " applied.");
+
                     return true;
                 }
             }

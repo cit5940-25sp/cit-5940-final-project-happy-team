@@ -27,11 +27,12 @@ public class MovieNameGame {
             WinCondition wc2 = WinCondition.random(database,5,true);
 
             // build player list - based on player 1 and 2
-            Player p1 = new Player(name1,wc1);
-            Player p2 = new Player(name2, wc2);
+            Player p1 = new Player("Player 1", wc1);
+            Player p2 = new Player("Player 2", wc2);
             List<Player> players = new ArrayList<>();
             players.add(p1);
             players.add(p2);
+
 
             // create gameState
             GameState gameState = new GameState(database, players);

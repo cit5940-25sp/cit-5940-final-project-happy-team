@@ -26,6 +26,18 @@ public class Player {
         return winCondition;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return this == o;
+    }
+
+    @Override
+    public int hashCode() {
+        return System.identityHashCode(this);
+    }
+
+
+
 
     //increments player's score and also records progress toward their win condition
     // should be called when a player makes a valid move that contributes to their win condition
