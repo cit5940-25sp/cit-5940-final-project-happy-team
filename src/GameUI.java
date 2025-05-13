@@ -170,7 +170,7 @@ public class GameUI {
     // control timer
     public void startTurnTimer() {
         timerRunning = true;
-        secondsRemaining.set(300);
+        secondsRemaining.set(30);
         turnStartTime = Instant.now(gameClock);
 
         gameTimer.scheduleAtFixedRate(new TimerTask() {
@@ -180,7 +180,7 @@ public class GameUI {
                     return;
                 }
                 Duration timeElapsed = Duration.between(turnStartTime, Instant.now(gameClock));
-                int remaining = (int) (300 - timeElapsed.getSeconds());
+                int remaining = (int) (30 - timeElapsed.getSeconds());
                 secondsRemaining.set(Math.max(remaining, 0));
 
                 gui.getGUIThread().invokeLater(() -> {
