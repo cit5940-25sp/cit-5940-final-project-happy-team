@@ -42,8 +42,8 @@ public class WinCondition {
         return random(database, targetCount, true);
     }
 
-    //random generaes a win condition based on movie database
-    //allow specifying whehter to use only default (genres based) win conditions
+    //random generates a win condition based on movie database
+    //allow specifying whether to use only default (genres based) win conditions
     //or to include all possible win condition types
     public static WinCondition random(MovieDatabase database, int targetCount,
                                       boolean defaultOnly) {

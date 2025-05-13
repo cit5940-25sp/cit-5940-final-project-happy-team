@@ -59,7 +59,6 @@ public class WinConditionTest {
 
             Move.ConnectionType type = cond.getType();
             String value = cond.getValue();
-            System.out.println("Generated non-default condition: " + type + "-" + value);
 
             //check if type and value are not null
             assertNotNull("Type should not be null", type);
@@ -93,7 +92,6 @@ public class WinConditionTest {
             assertNotNull("Value should exist in database", moviesWithValue);
 
             //check if we have enough movies
-            //System.out.println("Movies available for condition: " + moviesWithValue.size());
             assertTrue("Should have enough movies for the win condition",
                     moviesWithValue.size() >= cond.getTarget());
         }
@@ -111,10 +109,6 @@ public class WinConditionTest {
             uniqueVal.add(cond.getValue());
             uniTypes.add(cond.getType());
         }
-        //should have multiple unique values and possibly multiple types
-        System.out.println("Generated" + uniqueVal.size() + " unique condition value");
-        System.out.println("Generated" + uniTypes.size() + " unique condition types");
-
         assertTrue("Should generate multiple unique condition values", uniqueVal.size() > 1);
 
     }
